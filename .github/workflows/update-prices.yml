@@ -13,9 +13,10 @@ jobs:
           python-version: '3.10'
       - run: pip install requests beautifulsoup4
       - run: python scripts/update_prices.py
+      - run: python scripts/fix_image_urls.py
       - run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git add products.json
-          git commit -m "Update prices [skip ci]" || exit 0
+          git commit -m "Update prices and fix image URLs [skip ci]" || exit 0
           git push
