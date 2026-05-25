@@ -395,7 +395,145 @@
   <script>
     let allProducts = [];
 
-    // Carregar produtos do JSON
+    // ─────────────────────────────────────────
+    // CACHE DE IMAGENS (localStorage)
+    // ─────────────────────────────────────────
+    const IMG_CACHE_KEY = 'eleitos_img_v1';
+
+    function imgCacheGet(key) {
+      try { return JSON.parse(localStorage.getItem(IMG_CACHE_KEY) || '{}')[key] || null; }
+      catch { return null; }
+    }
+    function imgCacheSet(key, val) {
+      try {
+        const c = JSON.parse(localStorage.getItem(IMG_CACHE_KEY) || '{}');
+        c[key] = val;
+        localStorage.setItem(IMG_CACHE_KEY, JSON.stringify(c));
+      } catch {}
+    }
+
+    // ─────────────────────────────────────────
+    // DETECTAR NOME DA LOJA A PARTIR DO URL
+    // ─────────────────────────────────────────
+    function getStoreName(url) {
+      try {
+        const host = new URL(url).hostname.replace('www.', '');
+        const stores = {
+          'amazon.com': 'Amazon', 'amazon.co.uk': 'Amazon', 'amazon.de': 'Amazon',
+          'amazon.es': 'Amazon', 'amazon.fr': 'Amazon', 'amazon.it': 'Amazon',
+          'amazon.com.br': 'Amazon',
+          'fnac.pt': 'Fnac', 'fnac.com': 'Fnac',
+          'worten.pt': 'Worten', 'worten.com': 'Worten',
+          'mediamarkt.pt': 'MediaMarkt', 'mediamarkt.com': 'MediaMarkt',
+          'ebay.com': 'eBay', 'ebay.co.uk': 'eBay',
+          'aliexpress.com': 'AliExpress',
+          'pccomponentes.pt': 'PCComponentes', 'pccomponentes.com': 'PCComponentes',
+          'auchan.pt': 'Auchan',
+          'continente.pt': 'Continente',
+        };
+        for (const [domain, name] of Object.entries(stores)) {
+          if (host.includes(domain)) return name;
+        }
+        // Capitaliza o primeiro segmento do domínio
+        return host.split('.')[0].charAt(0).toUpperCase() + host.split('.')[0].slice(1);
+      } catch { return 'Ver Produto'; }
+    }
+
+    // ─────────────────────────────────────────
+    // RESOLUÇÃO AUTOMÁTICA DE IMAGEM
+    // Tenta, em ordem:
+    //   1. product.image (se definido)
+    //   2. Cache localStorage
+    //   3. OG/Twitter image via proxy CORS (allorigins.win)
+    //   4. Proxy alternativo (corsproxy.io)
+    //   5. null → placeholder elegante
+    // ─────────────────────────────────────────
+    async function resolveProductImage(product) {
+      // 1. Imagem já definida no JSON
+      if (product.image && product.image.trim() !== '') return product.image.trim();
+
+      const linkUrl = product.cta_link;
+      if (!linkUrl) return null;
+
+      // 2. Cache
+      const cached = imgCacheGet(linkUrl);
+      if (cached) return cached;
+
+      // Extrai meta imagens de um bloco de HTML
+      function extractMetaImage(html) {
+        const patterns = [
+          /property=["']og:image["'][^>]*content=["']([^"']+)["']/i,
+          /content=["']([^"']+)["'][^>]*property=["']og:image["']/i,
+          /name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i,
+          /content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i,
+          /name=["']twitter:image:src["'][^>]*content=["']([^"']+)["']/i,
+          /content=["']([^"']+)["'][^>]*name=["']twitter:image:src["']/i,
+        ];
+        for (const pat of patterns) {
+          const m = html.match(pat);
+          if (m && m[1] && m[1].startsWith('http')) return m[1];
+        }
+        return null;
+      }
+
+      // Tenta via um proxy CORS
+      async function tryProxy(proxyUrl) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 7000);
+        try {
+          const res = await fetch(proxyUrl, { signal: ctrl.signal });
+          if (!res.ok) return null;
+          const html = await res.text();
+          return extractMetaImage(html);
+        } catch { return null; }
+        finally { clearTimeout(timer); }
+      }
+
+      // 3. Proxy principal
+      let imgUrl = await tryProxy(
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(linkUrl)}`
+      );
+
+      // 4. Proxy alternativo
+      if (!imgUrl) {
+        imgUrl = await tryProxy(
+          `https://corsproxy.io/?${encodeURIComponent(linkUrl)}`
+        );
+      }
+
+      if (imgUrl) {
+        imgCacheSet(linkUrl, imgUrl);
+        return imgUrl;
+      }
+
+      // Guarda null para não tentar de novo
+      imgCacheSet(linkUrl, '__none__');
+      return null;
+    }
+
+    // ─────────────────────────────────────────
+    // PLACEHOLDER enquanto a imagem carrega
+    // ─────────────────────────────────────────
+    function makePlaceholder(name) {
+      return `
+        <div class="img-placeholder" style="
+          width:100%;height:100%;display:flex;flex-direction:column;
+          align-items:center;justify-content:center;gap:10px;background:#16141a;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+               stroke="#3a3a4a" stroke-width="1.2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <span style="font-family:'Montserrat',sans-serif;font-size:0.55rem;
+                       letter-spacing:0.14em;color:#404050;text-align:center;
+                       padding:0 12px;line-height:1.6;">${name}</span>
+        </div>`;
+    }
+
+    // ─────────────────────────────────────────
+    // CARREGAR PRODUTOS DO JSON
+    // ─────────────────────────────────────────
     async function loadProducts() {
       try {
         const response = await fetch('products.json');
@@ -407,25 +545,51 @@
       }
     }
 
-    // Renderizar produtos na grelha
+    // ─────────────────────────────────────────
+    // RENDERIZAR GRELHA
+    // ─────────────────────────────────────────
     function renderProducts(products) {
       const grid = document.getElementById('product-grid');
       grid.innerHTML = '';
 
       products.forEach((product, index) => {
         const categoryLabel = product.category.charAt(0).toUpperCase() + product.category.slice(1);
-        
+        const storeName     = getStoreName(product.cta_link || '');
+        const ctaLabel      = product.cta_label || `Ver Preço — ${storeName}`;
+        const hasDirectImg  = product.image && product.image.trim() !== '';
+        const cachedImg     = imgCacheGet(product.cta_link);
+        const initialImg    = hasDirectImg ? product.image.trim()
+                            : (cachedImg && cachedImg !== '__none__' ? cachedImg : null);
+
         const article = document.createElement('article');
         article.className = 'product-card fade-up';
         article.setAttribute('data-category', product.category);
         article.style.transitionDelay = `${index * 0.05}s`;
 
         article.innerHTML = `
-          <div class="media-area">
-            <img src="${product.image}" alt="${product.name}" loading="lazy" />
+          <div class="media-area" id="media-${index}">
+            ${initialImg
+              ? `<img src="${initialImg}" alt="${product.name}" loading="lazy"
+                      onerror="this.style.display='none';document.getElementById('ph-${index}').style.display='flex';" />`
+              : ''}
+            <div id="ph-${index}" class="img-placeholder" style="
+              width:100%;height:100%;display:${initialImg ? 'none' : 'flex'};
+              flex-direction:column;align-items:center;justify-content:center;
+              gap:10px;background:#16141a;position:${initialImg ? 'absolute' : 'relative'};inset:0;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                   stroke="#3a3a4a" stroke-width="1.2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span style="font-family:'Montserrat',sans-serif;font-size:0.55rem;
+                           letter-spacing:0.14em;color:#404050;text-align:center;
+                           padding:0 12px;line-height:1.6;">${product.name}</span>
+            </div>
             <div class="media-overlay"></div>
             <div class="absolute top-4 left-4"><span class="category-tag">${categoryLabel}</span></div>
           </div>
+
           <div class="p-5 flex flex-col gap-4">
             <div class="flex items-baseline gap-2">
               <span class="stars">${product.stars}</span>
@@ -437,17 +601,42 @@
             </div>
             <span class="price-label text-xl">${product.price}</span>
             <a href="${product.cta_link}" target="_blank" rel="noopener" class="cta-btn">
-              Verificar Preço na Amazon
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              ${ctaLabel}
+              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
             </a>
           </div>
         `;
 
         grid.appendChild(article);
+
+        // Se não tem imagem imediata, resolve em background
+        if (!initialImg) {
+          resolveProductImage(product).then(imgUrl => {
+            if (!imgUrl || imgUrl === '__none__') return;
+            const mediaArea = document.getElementById(`media-${index}`);
+            const placeholder = document.getElementById(`ph-${index}`);
+            if (!mediaArea || !placeholder) return;
+
+            const img = document.createElement('img');
+            img.src = imgUrl;
+            img.alt = product.name;
+            img.loading = 'lazy';
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.8s ease;';
+            img.onerror = () => img.remove(); // se falhar, mantém placeholder
+
+            // Insere antes do placeholder
+            mediaArea.insertBefore(img, placeholder);
+            placeholder.style.display = 'none';
+          });
+        }
       });
     }
 
-    // Intersection Observer para fade-in
+    // ─────────────────────────────────────────
+    // INTERSECTION OBSERVER (fade-in)
+    // ─────────────────────────────────────────
     function setupIntersectionObserver() {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => {
@@ -457,11 +646,12 @@
           }
         });
       }, { threshold: 0.07 });
-
       document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
     }
 
-    // Filtro de categoria
+    // ─────────────────────────────────────────
+    // FILTRO DE CATEGORIA
+    // ─────────────────────────────────────────
     function filterCards(btn, cat) {
       document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
@@ -485,7 +675,9 @@
       });
     }
 
-    // Inicializar ao carregar a página
+    // ─────────────────────────────────────────
+    // INICIALIZAR
+    // ─────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', loadProducts);
   </script>
 
