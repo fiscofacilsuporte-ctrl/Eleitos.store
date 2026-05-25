@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELEITOS — A Seleção Cinco Estrelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@200;300;400&family=Cormorant+SC:wght@300;400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/product-variants.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Cormorant Garamond"', 'serif'],
+            caps:    ['"Cormorant SC"', 'serif'],
+            body:    ['"Montserrat"', 'sans-serif'],
+          },
+          letterSpacing: {
+            ultra: '0.55em',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: #181618;
+      color: #d8d8e0;
+      font-family: 'Montserrat', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .logo-metallic {
+      background: linear-gradient(
+        160deg,
+        #e8e0d0 0%,
+        #c0b49c 18%,
+        #f2ece2 38%,
+        #a89880 56%,
+        #d6cebb 76%,
+        #f0ece4 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 4px 32px rgba(198,169,122,0.12));
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      letter-spacing: 0.52em;
+      font-size: clamp(3rem, 10vw, 6.5rem);
+    }
+
+    .tagline-main {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.55rem, 1.5vw, 0.72rem);
+      letter-spacing: 0.32em;
+      color: #9c9488;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .tagline-star {
+      color: #c6a97a;
+      font-size: 0.55rem;
+      opacity: 0.8;
+    }
+
+    .hairline {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #2c2c38 20%, #3a3a4a 50%, #2c2c38 80%, transparent);
+    }
+
+    .navbar {
+      background: rgba(24,22,24,0.94);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid #242430;
+      scrollbar-width: none;
+    }
+    .navbar::-webkit-scrollbar { display: none; }
+
+    .filter-pill {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border: 1px solid #2e2e3c;
+      color: #9898aa;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      background: transparent;
+    }
+    .filter-pill:hover,
+    .filter-pill.active {
+      border-color: #524838;
+      color: #c6a97a;
+      background: rgba(198,169,122,0.04);
+    }
+
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: #747484;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    #product-grid { background: #222228; }
+
+    .product-card {
+      background: #1e1c20;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+    .product-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(198,169,122,0.05) 0%, transparent 65%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .product-card:hover::after { opacity: 1; }
+
+    .media-area {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+      background: #16141a;
+    }
+    .media-area img,
+    .media-area video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s ease;
+    }
+    .product-card:hover .media-area img,
+    .product-card:hover .media-area video { transform: scale(1.04); }
+
+    .media-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
+        #1e1c20 0%,
+        rgba(30,28,32,0.55) 35%,
+        transparent 65%
+      );
+      pointer-events: none;
+    }
+
+    .category-tag {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #c6a97a;
+      border: 1px solid rgba(198,169,122,0.25);
+      padding: 3px 10px;
+      display: inline-block;
+      background: rgba(24,22,24,0.75);
+      backdrop-filter: blur(8px);
+    }
+
+    .stars { color: #c6a97a; font-size: 0.72rem; }
+    .stars-count {
+      font-size: 0.68rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: #ababba;
+    }
+
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      color: #f0ece6;
+      line-height: 1.15;
+    }
+
+    .verdict-text {
+      font-size: 0.76rem;
+      font-weight: 300;
+      letter-spacing: 0.03em;
+      color: #aeaec0;
+      line-height: 1.78;
+    }
+
+    .price-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 200;
+      color: #c8aa82;
+      letter-spacing: 0.08em;
+    }
+
+    .cta-btn {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #b8987a;
+      border: 1px solid #3e3428;
+      padding: 11px 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      width: 100%;
+      justify-content: center;
+    }
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(198,169,122,0.07), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+    .cta-btn:hover { border-color: #5a4030; color: #c6a97a; }
+    .cta-btn:hover::before { transform: translateX(100%); }
+    .arrow-icon {
+      width: 12px; height: 12px;
+      opacity: 0.55;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .cta-btn:hover .arrow-icon { transform: translateX(3px); opacity: 1; }
+
+    .manifesto-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      color: #7c7c94;
+      letter-spacing: 0.04em;
+      line-height: 1.7;
+    }
+
+    .footer-text {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: #686878;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.85s ease, transform 0.85s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    ::-webkit-scrollbar { width: 2px; }
+    ::-webkit-scrollbar-track { background: #181618; }
+    ::-webkit-scrollbar-thumb { background: #38384a; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════ -->
+  <header class="relative pt-16 pb-12 px-6 text-center overflow-hidden">
+
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-60 pointer-events-none"
+         style="background: radial-gradient(ellipse, rgba(198,169,122,0.06) 0%, transparent 70%); filter:blur(50px);"></div>
+
+    <div class="relative inline-block mb-5 select-none">
+      <h1 class="logo-metallic">ELEITOS</h1>
+    </div>
+
+    <div class="tagline-main select-none">
+      <span>A SELEÇÃO</span>
+      <span class="tagline-star">★</span>
+      <span>CINCO ESTRELAS</span>
+    </div>
+
+    <div class="max-w-xs mx-auto mt-8">
+      <hr class="hairline" />
+    </div>
+
+    <p class="mt-6 font-body font-light text-xs max-w-sm mx-auto"
+       style="letter-spacing:0.06em; line-height:1.9; color:#787890;">
+      Curadoria implacável. Só entra o que tem<br/>classificação ≥ 4.5★ e milhares de compradores reais.
+    </p>
+  </header>
+
+  <!-- ══════════════════════════════════════
+       FILTER BAR
+  ══════════════════════════════════════ -->
+  <nav class="navbar sticky top-0 z-50 py-3 px-4 flex items-center gap-2 overflow-x-auto justify-start md:justify-center" style="scroll-padding-left:1rem;">
+    <button class="filter-pill active"    onclick="filterCards(this,'todos')">Todos</button>
+    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
+    <button class="filter-pill"           onclick="filterCards(this,'audio')">Áudio</button>
+    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
+    <button class="filter-pill"           onclick="filterCards(this,'domotica')">Domótica</button>
+    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
+    <button class="filter-pill"           onclick="filterCards(this,'setups')">Setups</button>
+    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
+    <button class="filter-pill"           onclick="filterCards(this,'wearables')">Wearables</button>
+    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
+    <button class="filter-pill"           onclick="filterCards(this,'roupas')">Roupas</button>
+    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
+    <button class="filter-pill"           onclick="filterCards(this,'calcado')">Calçado</button>
+    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
+    <button class="filter-pill"           onclick="filterCards(this,'tvs')">TVs</button>
+    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
+    <button class="filter-pill"           onclick="filterCards(this,'smartphones')">Smartphones</button>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       MAIN — GRELHA DE PRODUTOS
+  ══════════════════════════════════════ -->
+  <main class="px-4 sm:px-6 md:px-10 pt-14 pb-24 max-w-[1440px] mx-auto">
+
+    <div class="flex items-center gap-4 mb-10">
+      <hr class="flex-1 hairline" />
+      <span class="section-label">A Seleção Cinco Estrelas</span>
+      <hr class="flex-1 hairline" />
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" id="product-grid">
+      <!-- Produtos carregados dinamicamente -->
+    </div>
+
+    <div class="text-center mt-16">
+      <hr class="hairline mb-10" />
+      <button class="filter-pill" style="padding:11px 36px;">Carregar Mais Eleitos</button>
+    </div>
+
+  </main>
+
+  <!-- ══════════════════════════════════════
+       MANIFESTO
+  ══════════════════════════════════════ -->
+  <section class="py-14 px-6 text-center"
+           style="border-top:1px solid #222230; border-bottom:1px solid #222230;">
+    <p class="manifesto-quote text-2xl sm:text-3xl max-w-2xl mx-auto leading-loose">
+      "Não há segunda opção.<br/>Só existe o melhor."
+    </p>
+    <div class="flex items-center justify-center gap-3 mt-6">
+      <span style="color:#585868;font-size:0.55rem;letter-spacing:0.22em;font-family:'Montserrat',sans-serif;font-weight:300;">ELEITOS</span>
+      <span style="color:#c6a97a;font-size:0.4rem;opacity:0.35;">✦</span>
+      <span style="color:#585868;font-size:0.55rem;letter-spacing:0.22em;font-family:'Montserrat',sans-serif;font-weight:300;">A SELEÇÃO CINCO ESTRELAS</span>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════ -->
+  <footer class="py-10 px-6 text-center">
+    <p class="footer-text mb-2">© 2025 ELEITOS — Curadoria independente. Não somos a Amazon.</p>
+    <p class="footer-text" style="color:#505060;">Os preços são indicativos e podem variar. Alguns links são afiliados.</p>
+  </footer>
+
+  <!-- ══════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════ -->
+  <script>
+    let allProducts = [];
+
+    // Carregar produtos do JSON
+    async function loadProducts() {
+      try {
+        const response = await fetch('products.json');
+        allProducts = await response.json();
+        renderProducts(allProducts);
+        setupIntersectionObserver();
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+      }
+    }
+
+    // Renderizar produtos na grelha
+    function renderProducts(products) {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = '';
+
+      products.forEach((product, index) => {
+        const categoryLabel = product.category.charAt(0).toUpperCase() + product.category.slice(1);
+        
+        const article = document.createElement('article');
+        article.className = 'product-card fade-up';
+        article.setAttribute('data-category', product.category);
+        article.style.transitionDelay = `${index * 0.05}s`;
+
+        article.innerHTML = `
+          <div class="media-area">
+            <img src="${product.image}" alt="${product.name}" loading="lazy" />
+            <div class="media-overlay"></div>
+            <div class="absolute top-4 left-4"><span class="category-tag">${categoryLabel}</span></div>
+          </div>
+          <div class="p-5 flex flex-col gap-4">
+            <div class="flex items-baseline gap-2">
+              <span class="stars">${product.stars}</span>
+              <span class="stars-count font-body">${product.stars_count}</span>
+            </div>
+            <div>
+              <h2 class="product-name text-xl mb-2">${product.name}</h2>
+              <p class="verdict-text">${product.verdict}</p>
+            </div>
+            <span class="price-label text-xl">${product.price}</span>
+            <a href="${product.cta_link}" target="_blank" rel="noopener" class="cta-btn">
+              Verificar Preço na Amazon
+              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        `;
+
+        grid.appendChild(article);
+      });
+    }
+
+    // Intersection Observer para fade-in
+    function setupIntersectionObserver() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.07 });
+
+      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    }
+
+    // Filtro de categoria
+    function filterCards(btn, cat) {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('#product-grid .product-card').forEach(card => {
+        const match = cat === 'todos' || card.dataset.category === cat;
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        if (match) {
+          card.style.opacity = '1';
+          card.style.transform = '';
+          card.style.pointerEvents = 'auto';
+          card.style.display = '';
+        } else {
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.97)';
+          card.style.pointerEvents = 'none';
+          setTimeout(() => {
+            if (card.style.opacity === '0') card.style.display = 'none';
+          }, 400);
+        }
+      });
+    }
+
+    // Inicializar ao carregar a página
+    document.addEventListener('DOMContentLoaded', loadProducts);
+  </script>
+
+</body>
+</html>

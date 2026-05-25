@@ -1,0 +1,165 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   VARIAÇÕES DE ESTILO POR CATEGORIA DE PRODUTO
+   Mantém a coerência visual enquanto adiciona sutilezas por categoria
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── ÁUDIO ── */
+.product-card[data-category="audio"] .category-tag {
+  color: #e8b4a8;
+  border-color: rgba(232, 180, 168, 0.25);
+}
+
+.product-card[data-category="audio"]::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(232, 180, 168, 0.05) 0%, transparent 65%);
+}
+
+.product-card[data-category="audio"]:hover {
+  box-shadow: 0 12px 40px rgba(232, 180, 168, 0.15);
+}
+
+/* ── DOMÓTICA ── */
+.product-card[data-category="domotica"] .category-tag {
+  color: #a8d4e8;
+  border-color: rgba(168, 212, 232, 0.25);
+}
+
+.product-card[data-category="domotica"]::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(168, 212, 232, 0.05) 0%, transparent 65%);
+}
+
+.product-card[data-category="domotica"]:hover {
+  box-shadow: 0 12px 40px rgba(168, 212, 232, 0.15);
+}
+
+/* ── SETUPS ── */
+.product-card[data-category="setups"] .category-tag {
+  color: #c8d4a8;
+  border-color: rgba(200, 212, 168, 0.25);
+}
+
+.product-card[data-category="setups"]::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(200, 212, 168, 0.05) 0%, transparent 65%);
+}
+
+.product-card[data-category="setups"]:hover {
+  box-shadow: 0 12px 40px rgba(200, 212, 168, 0.15);
+}
+
+/* ── WEARABLES ── */
+.product-card[data-category="wearables"] .category-tag {
+  color: #d4a8e8;
+  border-color: rgba(212, 168, 232, 0.25);
+}
+
+.product-card[data-category="wearables"]::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(212, 168, 232, 0.05) 0%, transparent 65%);
+}
+
+.product-card[data-category="wearables"]:hover {
+  box-shadow: 0 12px 40px rgba(212, 168, 232, 0.15);
+}
+
+/* ── ROUPAS ── */
+.product-card[data-category="roupas"] .category-tag {
+  color: #e8a8d4;
+  border-color: rgba(232, 168, 212, 0.25);
+}
+
+.product-card[data-category="roupas"]::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(232, 168, 212, 0.05) 0%, transparent 65%);
+}
+
+.product-card[data-category="roupas"]:hover {
+  box-shadow: 0 12px 40px rgba(232, 168, 212, 0.15);
+}
+
+/* ── CALÇADO ── */
+.product-card[data-category="calcado"] .category-tag {
+  color: #a8e8c8;
+  border-color: rgba(168, 232, 200, 0.25);
+}
+
+.product-card[data-category="calcado"]::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(168, 232, 200, 0.05) 0%, transparent 65%);
+}
+
+.product-card[data-category="calcado"]:hover {
+  box-shadow: 0 12px 40px rgba(168, 232, 200, 0.15);
+}
+
+/* ── TVs ── */
+.product-card[data-category="tvs"] .category-tag {
+  color: #e8d4a8;
+  border-color: rgba(232, 212, 168, 0.25);
+}
+
+.product-card[data-category="tvs"]::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(232, 212, 168, 0.05) 0%, transparent 65%);
+}
+
+.product-card[data-category="tvs"]:hover {
+  box-shadow: 0 12px 40px rgba(232, 212, 168, 0.15);
+}
+
+/* ── SMARTPHONES ── */
+.product-card[data-category="smartphones"] .category-tag {
+  color: #a8c8e8;
+  border-color: rgba(168, 200, 232, 0.25);
+}
+
+.product-card[data-category="smartphones"]::after {
+  background: radial-gradient(ellipse at 50% 0%, rgba(168, 200, 232, 0.05) 0%, transparent 65%);
+}
+
+.product-card[data-category="smartphones"]:hover {
+  box-shadow: 0 12px 40px rgba(168, 200, 232, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMAÇÕES ADICIONAIS
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Animação de entrada escalonada por categoria */
+.product-card[data-category="audio"] { animation-delay: 0.1s; }
+.product-card[data-category="domotica"] { animation-delay: 0.15s; }
+.product-card[data-category="setups"] { animation-delay: 0.2s; }
+.product-card[data-category="wearables"] { animation-delay: 0.25s; }
+.product-card[data-category="roupas"] { animation-delay: 0.3s; }
+.product-card[data-category="calcado"] { animation-delay: 0.35s; }
+.product-card[data-category="tvs"] { animation-delay: 0.4s; }
+.product-card[data-category="smartphones"] { animation-delay: 0.45s; }
+
+/* Efeito de brilho ao hover (sutil) */
+@keyframes subtle-glow {
+  0% { filter: drop-shadow(0 0 0px rgba(198, 169, 122, 0)); }
+  50% { filter: drop-shadow(0 0 8px rgba(198, 169, 122, 0.1)); }
+  100% { filter: drop-shadow(0 0 0px rgba(198, 169, 122, 0)); }
+}
+
+.product-card:hover {
+  animation: subtle-glow 0.6s ease-in-out;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVIDADE
+═══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 480px) {
+  .product-card {
+    transition: opacity 0.2s ease;
+  }
+  
+  .product-card:hover {
+    transform: none;
+  }
+}
