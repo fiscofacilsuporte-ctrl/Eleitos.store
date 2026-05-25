@@ -1,19 +1,31 @@
 name: Update Product Prices
+
 on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
       - run: pip install requests beautifulsoup4
+
       - run: python scripts/update_prices.py
+
       - run: python scripts/fix_image_urls.py
+
       - run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
