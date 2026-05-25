@@ -102,7 +102,9 @@
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid #242430;
+      scrollbar-width: none;
     }
+    .navbar::-webkit-scrollbar { display: none; }
 
     /* ── Filter pills ── */
     .filter-pill {
@@ -345,7 +347,7 @@
   <!-- ══════════════════════════════════════
        FILTER BAR
   ══════════════════════════════════════ -->
-  <nav class="navbar sticky top-0 z-50 py-3 px-4 flex items-center justify-center gap-2 overflow-x-auto">
+  <nav class="navbar sticky top-0 z-50 py-3 px-4 flex items-center gap-2 overflow-x-auto justify-start md:justify-center" style="scroll-padding-left:1rem;">
     <button class="filter-pill active"    onclick="filterCards(this,'todos')">Todos</button>
     <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
     <button class="filter-pill"           onclick="filterCards(this,'audio')">Áudio</button>
