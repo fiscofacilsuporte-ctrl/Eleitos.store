@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELEITOS — O Veredicto das Cinco Estrelas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@200;300;400&family=Cormorant+SC:wght@300;400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: '#0e0e0f',
+            card:    '#131314',
+            border:  '#1e1e21',
+            gold:    '#c6a97a',
+            'gold-dim': '#7a6242',
+            muted:   '#5a5a62',
+            soft:    '#9a9aa6',
+          },
+          fontFamily: {
+            display: ['"Cormorant Garamond"', 'serif'],
+            caps:    ['"Cormorant SC"', 'serif'],
+            body:    ['"Montserrat"', 'sans-serif'],
+          },
+          letterSpacing: {
+            ultra: '0.55em',
+            wide2: '0.3em',
+            mid:   '0.18em',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ─── Base ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: #0b0b0c;
+      color: #d8d8e0;
+      font-family: 'Montserrat', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── Metallic Logo ─────────────────────────────────────── */
+    .logo-metallic {
+      background: linear-gradient(
+        160deg,
+        #e8e0d0 0%,
+        #bfb49a 20%,
+        #f0ece4 40%,
+        #a89880 60%,
+        #d4cabb 80%,
+        #f2ede5 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 24px rgba(198,169,122,0.08));
+    }
+
+    /* ─── Tagline subtle glow ───────────────────────────────── */
+    .tagline-text {
+      color: #6a6a74;
+      letter-spacing: 0.28em;
+    }
+
+    /* ─── Divider hairline ──────────────────────────────────── */
+    .hairline {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #1e1e28 20%, #2a2a36 50%, #1e1e28 80%, transparent);
+    }
+
+    /* ─── Star accent ───────────────────────────────────────── */
+    .star-divider {
+      color: #c6a97a;
+      font-size: 0.5rem;
+      opacity: 0.6;
+    }
+
+    /* ─── Category tag ──────────────────────────────────────── */
+    .category-tag {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #7a6e5a;
+      border: 1px solid #2a2620;
+      padding: 3px 10px;
+      display: inline-block;
+    }
+
+    /* ─── Product card ──────────────────────────────────────── */
+    .product-card {
+      background: #111113;
+      border: 1px solid #1a1a1e;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.5s ease, transform 0.5s ease;
+    }
+
+    .product-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(198,169,122,0.04) 0%, transparent 65%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .product-card:hover {
+      border-color: #2e2c28;
+      transform: translateY(-2px);
+    }
+
+    .product-card:hover::after {
+      opacity: 1;
+    }
+
+    /* ─── Media area ────────────────────────────────────────── */
+    .media-area {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+      background: #0d0d0f;
+    }
+
+    .media-area img,
+    .media-area video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s ease;
+    }
+
+    .product-card:hover .media-area img,
+    .product-card:hover .media-area video {
+      transform: scale(1.03);
+    }
+
+    .media-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
+        #111113 0%,
+        rgba(17,17,19,0.5) 40%,
+        transparent 70%
+      );
+      pointer-events: none;
+    }
+
+    /* ─── Rating stars ──────────────────────────────────────── */
+    .stars { color: #c6a97a; }
+    .stars-count {
+      color: #55555f;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── Product name ──────────────────────────────────────── */
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      color: #e0dbd4;
+      line-height: 1.15;
+    }
+
+    /* ─── Verdict ───────────────────────────────────────────── */
+    .verdict-text {
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      color: #55555f;
+      line-height: 1.65;
+    }
+
+    /* ─── Price ─────────────────────────────────────────────── */
+    .price-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 200;
+      color: #a89474;
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── CTA button ────────────────────────────────────────── */
+    .cta-btn {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #a89474;
+      border: 1px solid #2e2820;
+      padding: 10px 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(198,169,122,0.06), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+
+    .cta-btn:hover {
+      border-color: #4a3e2e;
+      color: #c6a97a;
+    }
+
+    .cta-btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    /* ─── Section title ─────────────────────────────────────── */
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: #3a3a44;
+      text-transform: uppercase;
+    }
+
+    /* ─── Filter pills ──────────────────────────────────────── */
+    .filter-pill {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border: 1px solid #1e1e24;
+      color: #44444e;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    .filter-pill:hover,
+    .filter-pill.active {
+      border-color: #3a3228;
+      color: #8a7860;
+    }
+
+    /* ─── Footer ────────────────────────────────────────────── */
+    .footer-text {
+      font-size: 0.58rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: #2e2e38;
+    }
+
+    /* ─── Scroll fade-in ────────────────────────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── Scrollbar ─────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 2px; }
+    ::-webkit-scrollbar-track { background: #0b0b0c; }
+    ::-webkit-scrollbar-thumb { background: #2a2a30; }
+
+    /* ─── Amazon arrow icon ─────────────────────────────────── */
+    .arrow-icon {
+      width: 12px;
+      height: 12px;
+      opacity: 0.5;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .cta-btn:hover .arrow-icon {
+      transform: translateX(3px);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════════
+       HEADER
+  ════════════════════════════════════════════════════════ -->
+  <header class="relative pt-16 pb-12 px-6 text-center overflow-hidden">
+
+    <!-- Ambient glow behind logo -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full"
+         style="background: radial-gradient(circle, rgba(198,169,122,0.05) 0%, transparent 70%); filter: blur(40px); pointer-events:none;"></div>
+
+    <!-- LOGO -->
+    <div class="relative inline-block mb-4">
+      <h1 class="logo-metallic font-display font-extralight text-5xl sm:text-7xl md:text-8xl tracking-ultra select-none">
+        ELEITOS
+      </h1>
+    </div>
+
+    <!-- Tagline -->
+    <p class="tagline-text font-body font-light text-xs mt-1 select-none">
+      O VEREDICTO DAS CINCO ESTRELAS
+    </p>
+
+    <!-- Decorative hairline -->
+    <div class="max-w-xs mx-auto mt-8 mb-0">
+      <hr class="hairline" />
+    </div>
+
+    <!-- Sub-tagline / manifesto -->
+    <p class="mt-6 text-xs font-body font-light text-muted max-w-sm mx-auto" style="letter-spacing:0.06em; line-height:1.9; color:#3e3e48;">
+      Curadoria implacável. Só entra o que tem<br/>classificação ≥ 4.5★ e milhares de compradores reais.
+    </p>
+
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════
+       FILTER BAR
+  ════════════════════════════════════════════════════════ -->
+  <nav class="sticky top-0 z-50 py-3 px-4 flex items-center justify-center gap-2 overflow-x-auto"
+       style="background: rgba(11,11,12,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid #13131a;">
+    <button class="filter-pill active" onclick="filterCards('todos')">Todos</button>
+    <span class="star-divider">✦</span>
+    <button class="filter-pill" onclick="filterCards('audio')">Áudio</button>
+    <span class="star-divider">✦</span>
+    <button class="filter-pill" onclick="filterCards('domotica')">Domótica</button>
+    <span class="star-divider">✦</span>
+    <button class="filter-pill" onclick="filterCards('setups')">Setups</button>
+    <span class="star-divider">✦</span>
+    <button class="filter-pill" onclick="filterCards('wearables')">Wearables</button>
+  </nav>
+
+  <!-- ════════════════════════════════════════════════════════
+       MAIN — PRODUCT GRID
+  ════════════════════════════════════════════════════════ -->
+  <main class="px-4 sm:px-6 md:px-10 pt-14 pb-24 max-w-[1440px] mx-auto">
+
+    <!-- Section label -->
+    <div class="flex items-center gap-4 mb-10">
+      <hr class="flex-1 hairline" />
+      <span class="section-label">A Seleção Cinco Estrelas</span>
+      <hr class="flex-1 hairline" />
+    </div>
+
+    <!-- Product Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" id="product-grid"
+         style="background: #16161a;">
+
+      <!-- ─────────────────────────────────────────────────────
+           PRODUCT CARD 01 — Sony WH-1000XM5 — Áudio
+      ───────────────────────────────────────────────────── -->
+      <article class="product-card fade-up" data-category="audio">
+
+        <!-- ── MEDIA SECTION ─────────────────────────────────
+             COMO USAR:
+             · IMAGEM ESTÁTICA: descomenta o <img> e remove o <video>
+             · VÍDEO TIKTOK/REELS: descomenta o <video> e remove o <img>
+               O vídeo deve ser vertical (9:16), formato .mp4.
+               Os atributos autoplay, muted, loop, playsinline são obrigatórios.
+        ──────────────────────────────────────────────────── -->
+        <div class="media-area">
+
+          <!-- OPÇÃO A — Imagem estática -->
+          <img
+            src="https://images-na.ssl-images-amazon.com/images/I/61vGMuEqYML._AC_SL1500_.jpg"
+            alt="Sony WH-1000XM5"
+            loading="lazy"
+          />
+
+          <!-- OPÇÃO B — Vídeo vertical TikTok/Reels (descomenta para usar)
+          <video
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="none"
+            poster="URL_DO_POSTER_OPCIONAL.jpg"
+          >
+            <source src="SEU_VIDEO_VERTICAL.mp4" type="video/mp4" />
+          </video>
+          -->
+
+          <!-- Gradiente overlay fixo -->
+          <div class="media-overlay"></div>
+
+          <!-- Category tag sobre a imagem -->
+          <div class="absolute top-4 left-4">
+            <span class="category-tag">Áudio</span>
+          </div>
+        </div>
+
+        <!-- ── CONTENT ──────────────────────────────────────── -->
+        <div class="p-5 flex flex-col gap-4">
+
+          <!-- Rating -->
+          <div class="flex items-baseline gap-2">
+            <span class="stars text-xs">★★★★★</span>
+            <span class="stars-count font-body">4.7 &nbsp;|&nbsp; +24.000 avaliações</span>
+          </div>
+
+          <!-- Name + Verdict -->
+          <div>
+            <h2 class="product-name text-xl mb-2">Sony WH-1000XM5</h2>
+            <p class="verdict-text">
+              O padrão absoluto em cancelamento de ruído. Quarenta horas de bateria, microfones de estúdio e a confortabilidade que transforma viagens longas em santuários de silêncio.
+            </p>
+          </div>
+
+          <!-- Price + CTA -->
+          <div class="flex items-center justify-between mt-1">
+            <span class="price-label text-lg">≈ €349</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Sony+WH-1000XM5" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ─────────────────────────────────────────────────────
+           PRODUCT CARD 02 — Elgato Stream Deck MK.2 — Setups
+      ───────────────────────────────────────────────────── -->
+      <article class="product-card fade-up" data-category="setups" style="transition-delay: 0.1s">
+        <div class="media-area">
+
+          <!-- OPÇÃO A — Imagem estática -->
+          <img
+            src="https://images-na.ssl-images-amazon.com/images/I/71AaCBBg1CL._AC_SL1500_.jpg"
+            alt="Elgato Stream Deck MK.2"
+            loading="lazy"
+          />
+
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="SEU_VIDEO_VERTICAL.mp4" type="video/mp4" />
+          </video>
+          -->
+
+          <div class="media-overlay"></div>
+          <div class="absolute top-4 left-4">
+            <span class="category-tag">Setups</span>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col gap-4">
+          <div class="flex items-baseline gap-2">
+            <span class="stars text-xs">★★★★★</span>
+            <span class="stars-count font-body">4.7 &nbsp;|&nbsp; +22.000 avaliações</span>
+          </div>
+          <div>
+            <h2 class="product-name text-xl mb-2">Elgato Stream Deck MK.2</h2>
+            <p class="verdict-text">
+              Quinze teclas LCD totalmente personalizáveis. O painel de controlo físico que separa os setups amadores dos estúdios profissionais — em casa.
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="price-label text-lg">≈ €149</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Elgato+Stream+Deck+MK2" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ─────────────────────────────────────────────────────
+           PRODUCT CARD 03 — Amazon Echo Show 10 — Domótica
+      ───────────────────────────────────────────────────── -->
+      <article class="product-card fade-up" data-category="domotica" style="transition-delay: 0.2s">
+        <div class="media-area">
+
+          <!-- OPÇÃO A — Imagem estática -->
+          <img
+            src="https://images-na.ssl-images-amazon.com/images/I/71PVxFatVML._AC_SL1500_.jpg"
+            alt="Amazon Echo Show 10"
+            loading="lazy"
+          />
+
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="SEU_VIDEO_VERTICAL.mp4" type="video/mp4" />
+          </video>
+          -->
+
+          <div class="media-overlay"></div>
+          <div class="absolute top-4 left-4">
+            <span class="category-tag">Domótica</span>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col gap-4">
+          <div class="flex items-baseline gap-2">
+            <span class="stars text-xs">★★★★★</span>
+            <span class="stars-count font-body">4.6 &nbsp;|&nbsp; +18.000 avaliações</span>
+          </div>
+          <div>
+            <h2 class="product-name text-xl mb-2">Amazon Echo Show 10</h2>
+            <p class="verdict-text">
+              O ecrã que te segue. Roda autonomamente para te manter em foco durante chamadas ou enquanto cozinhas. O hub inteligente que transforma qualquer divisão num espaço do futuro.
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="price-label text-lg">≈ €249</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Amazon+Echo+Show+10" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ─────────────────────────────────────────────────────
+           PRODUCT CARD 04 — Apple Watch Ultra 2 — Wearables
+      ───────────────────────────────────────────────────── -->
+      <article class="product-card fade-up" data-category="wearables" style="transition-delay: 0.05s">
+        <div class="media-area">
+
+          <!-- OPÇÃO A — Imagem estática -->
+          <img
+            src="https://images-na.ssl-images-amazon.com/images/I/81ciuU1U3fL._AC_SL1500_.jpg"
+            alt="Apple Watch Ultra 2"
+            loading="lazy"
+          />
+
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="SEU_VIDEO_VERTICAL.mp4" type="video/mp4" />
+          </video>
+          -->
+
+          <div class="media-overlay"></div>
+          <div class="absolute top-4 left-4">
+            <span class="category-tag">Wearables</span>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col gap-4">
+          <div class="flex items-baseline gap-2">
+            <span class="stars text-xs">★★★★★</span>
+            <span class="stars-count font-body">4.8 &nbsp;|&nbsp; +14.000 avaliações</span>
+          </div>
+          <div>
+            <h2 class="product-name text-xl mb-2">Apple Watch Ultra 2</h2>
+            <p class="verdict-text">
+              Titânio aeroespacial, GPS de dupla frequência e autonomia de 60 horas. O relógio que não pede desculpa por ser o melhor — construído para os que recusam comprometer.
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="price-label text-lg">≈ €799</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Apple+Watch+Ultra+2" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ─────────────────────────────────────────────────────
+           PRODUCT CARD 05 — Bose QuietComfort Ultra — Áudio
+      ───────────────────────────────────────────────────── -->
+      <article class="product-card fade-up" data-category="audio" style="transition-delay: 0.15s">
+        <div class="media-area">
+
+          <!-- OPÇÃO A — Imagem estática -->
+          <img
+            src="https://images-na.ssl-images-amazon.com/images/I/51DU1FZDXiL._AC_SL1500_.jpg"
+            alt="Bose QuietComfort Ultra"
+            loading="lazy"
+          />
+
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="SEU_VIDEO_VERTICAL.mp4" type="video/mp4" />
+          </video>
+          -->
+
+          <div class="media-overlay"></div>
+          <div class="absolute top-4 left-4">
+            <span class="category-tag">Áudio</span>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col gap-4">
+          <div class="flex items-baseline gap-2">
+            <span class="stars text-xs">★★★★★</span>
+            <span class="stars-count font-body">4.6 &nbsp;|&nbsp; +11.000 avaliações</span>
+          </div>
+          <div>
+            <h2 class="product-name text-xl mb-2">Bose QuietComfort Ultra</h2>
+            <p class="verdict-text">
+              Áudio imersivo com som espacial que coloca cada instrumento no lugar exato. O cancelamento de ruído que a Bose aperfeiçoou durante décadas — na sua iteração mais refinada.
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="price-label text-lg">≈ €379</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Bose+QuietComfort+Ultra" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ─────────────────────────────────────────────────────
+           PRODUCT CARD 06 — Philips Hue Gradient Lightstrip — Domótica
+      ───────────────────────────────────────────────────── -->
+      <article class="product-card fade-up" data-category="domotica" style="transition-delay: 0.25s">
+        <div class="media-area">
+
+          <!-- OPÇÃO A — Imagem estática -->
+          <img
+            src="https://images-na.ssl-images-amazon.com/images/I/71ABzqU2CkL._AC_SL1500_.jpg"
+            alt="Philips Hue Gradient Lightstrip"
+            loading="lazy"
+          />
+
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="SEU_VIDEO_VERTICAL.mp4" type="video/mp4" />
+          </video>
+          -->
+
+          <div class="media-overlay"></div>
+          <div class="absolute top-4 left-4">
+            <span class="category-tag">Domótica</span>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col gap-4">
+          <div class="flex items-baseline gap-2">
+            <span class="stars text-xs">★★★★★</span>
+            <span class="stars-count font-body">4.5 &nbsp;|&nbsp; +9.000 avaliações</span>
+          </div>
+          <div>
+            <h2 class="product-name text-xl mb-2">Philips Hue Gradient Lightstrip</h2>
+            <p class="verdict-text">
+              Múltiplas cores simultâneas numa única fita. Sincroniza com filmes, música e jogos em tempo real. A diferença entre um setup qualquer e um setup que as pessoas fotografam.
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="price-label text-lg">≈ €119</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Philips+Hue+Gradient+Lightstrip" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ─────────────────────────────────────────────────────
+           PRODUCT CARD 07 — LG C4 OLED — Setups
+      ───────────────────────────────────────────────────── -->
+      <article class="product-card fade-up" data-category="setups" style="transition-delay: 0.1s">
+        <div class="media-area">
+
+          <!-- OPÇÃO A — Imagem estática -->
+          <img
+            src="https://images-na.ssl-images-amazon.com/images/I/71HpU5WQZJL._AC_SL1500_.jpg"
+            alt="LG C4 OLED 55"
+            loading="lazy"
+          />
+
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="SEU_VIDEO_VERTICAL.mp4" type="video/mp4" />
+          </video>
+          -->
+
+          <div class="media-overlay"></div>
+          <div class="absolute top-4 left-4">
+            <span class="category-tag">Setups</span>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col gap-4">
+          <div class="flex items-baseline gap-2">
+            <span class="stars text-xs">★★★★★</span>
+            <span class="stars-count font-body">4.8 &nbsp;|&nbsp; +9.000 avaliações</span>
+          </div>
+          <div>
+            <h2 class="product-name text-xl mb-2">LG C4 OLED 55"</h2>
+            <p class="verdict-text">
+              Pretos absolutos, contraste infinito e 120Hz nativos com G-Sync e FreeSync Premium. O painel que os profissionais de imagem e os gamers de alto nível disputam há anos consecutivos.
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="price-label text-lg">≈ €1.299</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=LG+C4+OLED+55" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ─────────────────────────────────────────────────────
+           PRODUCT CARD 08 — Garmin Fenix 7X Pro — Wearables
+      ───────────────────────────────────────────────────── -->
+      <article class="product-card fade-up" data-category="wearables" style="transition-delay: 0.2s">
+        <div class="media-area">
+
+          <!-- OPÇÃO A — Imagem estática -->
+          <img
+            src="https://images-na.ssl-images-amazon.com/images/I/71hHDfAJaQL._AC_SL1500_.jpg"
+            alt="Garmin Fenix 7X Pro"
+            loading="lazy"
+          />
+
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="SEU_VIDEO_VERTICAL.mp4" type="video/mp4" />
+          </video>
+          -->
+
+          <div class="media-overlay"></div>
+          <div class="absolute top-4 left-4">
+            <span class="category-tag">Wearables</span>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col gap-4">
+          <div class="flex items-baseline gap-2">
+            <span class="stars text-xs">★★★★★</span>
+            <span class="stars-count font-body">4.7 &nbsp;|&nbsp; +16.000 avaliações</span>
+          </div>
+          <div>
+            <h2 class="product-name text-xl mb-2">Garmin Fēnix 7X Pro</h2>
+            <p class="verdict-text">
+              Lanterna LED integrada, carregamento solar e autonomia de 37 dias. O relógio de expedição que atletas de montanha e mergulhadores de profundidade escolhem — sem alternativa próxima.
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="price-label text-lg">≈ €699</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Garmin+Fenix+7X+Pro" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ─────────────────────────────────────────────────────
+           PRODUCT CARD 09 — Logitech MX Master 3S — Setups
+      ───────────────────────────────────────────────────── -->
+      <article class="product-card fade-up" data-category="setups" style="transition-delay: 0.3s">
+        <div class="media-area">
+
+          <!-- OPÇÃO A — Imagem estática -->
+          <img
+            src="https://images-na.ssl-images-amazon.com/images/I/61ni3t1ryQL._AC_SL1500_.jpg"
+            alt="Logitech MX Master 3S"
+            loading="lazy"
+          />
+
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="SEU_VIDEO_VERTICAL.mp4" type="video/mp4" />
+          </video>
+          -->
+
+          <div class="media-overlay"></div>
+          <div class="absolute top-4 left-4">
+            <span class="category-tag">Setups</span>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col gap-4">
+          <div class="flex items-baseline gap-2">
+            <span class="stars text-xs">★★★★★</span>
+            <span class="stars-count font-body">4.7 &nbsp;|&nbsp; +31.000 avaliações</span>
+          </div>
+          <div>
+            <h2 class="product-name text-xl mb-2">Logitech MX Master 3S</h2>
+            <p class="verdict-text">
+              Scroll eletromagnético silencioso a 1000 DPI. A única escolha legítima para quem trabalha oito horas por dia e recusa compromissos de conforto ou precisão.
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="price-label text-lg">≈ €99</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Logitech+MX+Master+3S" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+    </div><!-- /product-grid -->
+
+    <!-- Load more (placeholder) -->
+    <div class="text-center mt-16">
+      <hr class="hairline mb-10" />
+      <button class="filter-pill" style="padding: 10px 32px; font-size:0.6rem; letter-spacing:0.22em;">
+        Carregar Mais Eleitos
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ════════════════════════════════════════════════════════
+       MANIFESTO STRIP
+  ════════════════════════════════════════════════════════ -->
+  <section class="py-14 px-6 text-center" style="border-top: 1px solid #13131a; border-bottom: 1px solid #13131a;">
+    <p class="font-display font-light text-2xl sm:text-3xl text-center max-w-2xl mx-auto leading-loose"
+       style="color:#2a2a32; letter-spacing:0.05em;">
+      "Não há segunda opção.<br/>Só existe o melhor."
+    </p>
+    <div class="flex items-center justify-center gap-3 mt-6">
+      <span style="color:#2a2824; font-size:0.55rem; letter-spacing:0.22em; font-family:'Montserrat',sans-serif; font-weight:300;">ELEITOS</span>
+      <span class="star-divider" style="opacity:0.3;">✦</span>
+      <span style="color:#2a2824; font-size:0.55rem; letter-spacing:0.22em; font-family:'Montserrat',sans-serif; font-weight:300;">A SELEÇÃO CINCO ESTRELAS</span>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════════════════ -->
+  <footer class="py-10 px-6 text-center">
+    <p class="footer-text mb-2">
+      © 2025 ELEITOS — Curadoria independente. Não somos a Amazon.
+    </p>
+    <p class="footer-text" style="color:#1e1e26;">
+      Os preços são indicativos e podem variar. Alguns links são afiliados.
+    </p>
+  </footer>
+
+  <!-- ════════════════════════════════════════════════════════
+       JAVASCRIPT — Filter + Scroll Animations
+  ════════════════════════════════════════════════════════ -->
+  <script>
+    // ── Scroll fade-in ──────────────────────────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // ── Category filter ─────────────────────────────────────
+    function filterCards(cat) {
+      const cards = document.querySelectorAll('#product-grid .product-card');
+      const pills  = document.querySelectorAll('.filter-pill');
+
+      pills.forEach(p => p.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      cards.forEach(card => {
+        const match = cat === 'todos' || card.dataset.category === cat;
+        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        if (match) {
+          card.style.opacity = '1';
+          card.style.transform = 'scale(1)';
+          card.style.pointerEvents = 'auto';
+          card.style.display = '';
+        } else {
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.97)';
+          card.style.pointerEvents = 'none';
+          setTimeout(() => { if (card.style.opacity === '0') card.style.display = 'none'; }, 400);
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
