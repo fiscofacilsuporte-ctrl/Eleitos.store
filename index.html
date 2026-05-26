@@ -7,679 +7,1010 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@200;300;400&family=Cormorant+SC:wght@300;400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles/product-variants.css" />
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            display: ['"Cormorant Garamond"', 'serif'],
-            caps:    ['"Cormorant SC"', 'serif'],
-            body:    ['"Montserrat"', 'sans-serif'],
-          },
-          letterSpacing: {
-            ultra: '0.55em',
-          },
-        }
-      }
-    }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,200;0,300;0,400;1,300&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet" />
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
+    :root {
+      --bg:      #181618;
+      --bg-card: #1c1a1e;
+      --bg-nav:  rgba(24,22,24,0.96);
+      --border:  #28263a;
+      --gold:    #c6a97a;
+      --text-1:  #f0ece6;
+      --text-2:  #9898a8;
+      --text-3:  #565668;
+      --text-4:  #343444;
+    }
+
     body {
-      background-color: #181618;
-      color: #d8d8e0;
+      background-color: var(--bg);
+      color: var(--text-2);
       font-family: 'Montserrat', sans-serif;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    body::before {
+    body::after {
       content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.03;
-      pointer-events: none;
-      z-index: 9999;
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.028; pointer-events: none; z-index: 9998;
     }
 
-    .logo-metallic {
-      background: linear-gradient(
-        160deg,
-        #e8e0d0 0%,
-        #c0b49c 18%,
-        #f2ece2 38%,
-        #a89880 56%,
-        #d6cebb 76%,
-        #f0ece4 100%
-      );
+    /* ── HEADER ── */
+    .site-header {
+      padding: clamp(3rem,8vw,5.5rem) 1.5rem clamp(2rem,5vw,3.5rem);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .header-glow {
+      position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+      width: 480px; height: 280px;
+      background: radial-gradient(ellipse, rgba(198,169,122,0.07) 0%, transparent 70%);
+      filter: blur(40px); pointer-events: none;
+    }
+    .logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2.8rem, 11vw, 7rem);
+      letter-spacing: 0.5em;
+      padding-right: 0.5em;
+      line-height: 1;
+      background: linear-gradient(155deg, #ede5d5 0%, #c2b49e 15%, #f4f0e8 35%, #b09880 52%, #ddd4c2 68%, #f6f2ec 85%, #c8bfae 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      filter: drop-shadow(0 4px 32px rgba(198,169,122,0.12));
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      letter-spacing: 0.52em;
-      font-size: clamp(3rem, 10vw, 6.5rem);
-    }
-
-    .tagline-main {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 300;
-      font-size: clamp(0.55rem, 1.5vw, 0.72rem);
-      letter-spacing: 0.32em;
-      color: #9c9488;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    .tagline-star {
-      color: #c6a97a;
-      font-size: 0.55rem;
-      opacity: 0.8;
-    }
-
-    .hairline {
-      border: none;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #2c2c38 20%, #3a3a4a 50%, #2c2c38 80%, transparent);
-    }
-
-    .navbar {
-      background: rgba(24,22,24,0.94);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid #242430;
-      scrollbar-width: none;
-    }
-    .navbar::-webkit-scrollbar { display: none; }
-
-    .filter-pill {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.58rem;
-      font-weight: 300;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      padding: 6px 16px;
-      border: 1px solid #2e2e3c;
-      color: #9898aa;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      white-space: nowrap;
-      background: transparent;
-    }
-    .filter-pill:hover,
-    .filter-pill.active {
-      border-color: #524838;
-      color: #c6a97a;
-      background: rgba(198,169,122,0.04);
-    }
-
-    .section-label {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.58rem;
-      font-weight: 300;
-      letter-spacing: 0.3em;
-      color: #747484;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    #product-grid { background: #222228; }
-
-    .product-card {
-      background: #1e1c20;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.5s ease, box-shadow 0.5s ease;
-    }
-    .product-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(198,169,122,0.05) 0%, transparent 65%);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-    .product-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-    }
-    .product-card:hover::after { opacity: 1; }
-
-    .media-area {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 9 / 16;
-      overflow: hidden;
-      background: #16141a;
-    }
-    .media-area img,
-    .media-area video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      filter: drop-shadow(0 2px 28px rgba(198,169,122,0.14));
       display: block;
-      transition: transform 0.8s ease;
+      animation: logoReveal 1.4s cubic-bezier(0.22,1,0.36,1) both;
     }
-    .product-card:hover .media-area img,
-    .product-card:hover .media-area video { transform: scale(1.04); }
+    @keyframes logoReveal {
+      from { opacity:0; transform: translateY(12px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .tagline {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-top: 0.9rem;
+      font-family: 'Montserrat', sans-serif; font-weight: 300;
+      font-size: clamp(0.52rem,1.4vw,0.7rem); letter-spacing: 0.3em; color: var(--text-3);
+      animation: fadeUp 1.6s 0.3s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .tagline-star { color: var(--gold); font-size: 0.5rem; opacity: 0.75; }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(8px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .header-line {
+      max-width: 280px; margin: 2rem auto 0; height: 1px; border: none;
+      background: linear-gradient(90deg, transparent, #2e2c44 25%, #3e3c56 50%, #2e2c44 75%, transparent);
+      animation: fadeUp 1.8s 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .header-sub {
+      margin-top: 1.4rem; font-size: 0.68rem; font-weight: 300;
+      letter-spacing: 0.05em; line-height: 2; color: var(--text-4);
+      animation: fadeUp 1.8s 0.6s cubic-bezier(0.22,1,0.36,1) both;
+    }
 
-    .media-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top,
-        #1e1c20 0%,
-        rgba(30,28,32,0.55) 35%,
-        transparent 65%
-      );
+    /* ── NAVBAR ── */
+    .site-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg-nav); backdrop-filter: blur(28px);
+      border-bottom: 1px solid #20202e;
+    }
+    .nav-inner {
+      display: flex; align-items: center; gap: 4px;
+      overflow-x: auto; padding: 0.6rem 1.25rem;
+      scrollbar-width: none; max-width: 1440px; margin: 0 auto;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-sep { color: var(--gold); font-size: 0.38rem; opacity: 0.3; flex-shrink: 0; padding: 0 2px; }
+    .f-pill {
+      flex-shrink: 0; font-family: 'Montserrat', sans-serif;
+      font-size: 0.56rem; font-weight: 300; letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 5px 14px; border: 1px solid #28283a; color: var(--text-3);
+      cursor: pointer; transition: all 0.28s ease; background: transparent; white-space: nowrap;
+    }
+    .f-pill:hover, .f-pill.active {
+      border-color: rgba(198,169,122,0.35); color: var(--gold); background: rgba(198,169,122,0.04);
+    }
+
+    /* ── MAIN ── */
+    .main-wrap { max-width: 1440px; margin: 0 auto; padding: 3.5rem 1rem 6rem; }
+    @media(min-width:640px)  { .main-wrap { padding: 3.5rem 1.5rem 6rem; } }
+    @media(min-width:1024px) { .main-wrap { padding: 3.5rem 2.5rem 6rem; } }
+
+    .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; }
+    .section-line {
+      flex: 1; height: 1px; border: none;
+      background: linear-gradient(90deg, transparent, #252538 30%, #323250 50%, #252538 70%, transparent);
+    }
+    .section-label {
+      font-family: 'Montserrat', sans-serif; font-size: 0.56rem; font-weight: 300;
+      letter-spacing: 0.3em; color: var(--text-4); text-transform: uppercase; white-space: nowrap;
+    }
+
+    /* ── GRID ── */
+    .products-grid {
+      display: grid; grid-template-columns: 1fr; gap: 1px; background: #22202c;
+    }
+    @media(min-width:600px)  { .products-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(min-width:1024px) { .products-grid { grid-template-columns: repeat(3,1fr); } }
+    @media(min-width:1400px) { .products-grid { grid-template-columns: repeat(4,1fr); } }
+
+    /* ── CARD ── */
+    .p-card {
+      background: var(--bg-card); position: relative; overflow: hidden;
+      transition: transform 0.55s cubic-bezier(0.22,1,0.36,1), box-shadow 0.55s ease;
+      display: flex; flex-direction: column;
+    }
+    .p-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(198,169,122,0.4), transparent);
+      opacity: 0; transition: opacity 0.4s ease; z-index: 2;
+    }
+    .p-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% -10%, rgba(198,169,122,0.06) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+    }
+    .p-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.6); z-index: 1; }
+    .p-card:hover::before { opacity: 1; }
+    .p-card:hover::after  { opacity: 1; }
+
+    /* ── Media ── */
+    .card-media {
+      position: relative; width: 100%; aspect-ratio: 9/16;
+      overflow: hidden; background: #141218;
+    }
+    .card-media img, .card-media video {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.9s cubic-bezier(0.22,1,0.36,1);
+    }
+    .p-card:hover .card-media img,
+    .p-card:hover .card-media video { transform: scale(1.05); }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, var(--bg-card) 0%, rgba(28,26,30,0.6) 30%, rgba(28,26,30,0.1) 58%, transparent 75%);
       pointer-events: none;
     }
-
-    .category-tag {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 400;
-      font-size: 0.58rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #c6a97a;
-      border: 1px solid rgba(198,169,122,0.25);
-      padding: 3px 10px;
-      display: inline-block;
-      background: rgba(24,22,24,0.75);
-      backdrop-filter: blur(8px);
+    .cat-tag {
+      position: absolute; top: 14px; left: 14px;
+      font-family: 'Montserrat', sans-serif; font-weight: 400;
+      font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); border: 1px solid rgba(198,169,122,0.28);
+      background: rgba(20,18,24,0.82); backdrop-filter: blur(10px); padding: 3px 10px;
     }
 
-    .stars { color: #c6a97a; font-size: 0.72rem; }
-    .stars-count {
-      font-size: 0.68rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      color: #ababba;
+    /* ── Card body ── */
+    .card-body { padding: 1.25rem 1.25rem 1.4rem; display: flex; flex-direction: column; gap: 0.9rem; flex: 1; }
+    .card-rating { display: flex; align-items: center; gap: 0.5rem; }
+    .stars { color: var(--gold); font-size: 0.68rem; letter-spacing: 0.05em; }
+    .rating-text { font-size: 0.65rem; font-weight: 300; letter-spacing: 0.04em; color: #8e8e9e; }
+    .card-title {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 1.2rem; line-height: 1.2; color: var(--text-1); letter-spacing: 0.01em;
     }
-
-    .product-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      color: #f0ece6;
-      line-height: 1.15;
+    .card-verdict { font-size: 0.73rem; font-weight: 300; line-height: 1.82; letter-spacing: 0.025em; color: #9090a2; }
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 0.6rem; border-top: 1px solid #242238; margin-top: auto;
     }
-
-    .verdict-text {
-      font-size: 0.76rem;
-      font-weight: 300;
-      letter-spacing: 0.03em;
-      color: #aeaec0;
-      line-height: 1.78;
-    }
-
-    .price-label {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 200;
-      color: #c8aa82;
-      letter-spacing: 0.08em;
-    }
-
+    .card-price { font-family: 'Cormorant Garamond', serif; font-weight: 200; font-size: 1.35rem; color: #caa880; letter-spacing: 0.06em; }
+    .card-badge { font-size: 0.52rem; font-weight: 300; letter-spacing: 0.14em; color: var(--text-4); text-transform: uppercase; }
     .cta-btn {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.6rem;
-      font-weight: 400;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: #b8987a;
-      border: 1px solid #3e3428;
-      padding: 11px 18px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.35s ease;
-      position: relative;
-      overflow: hidden;
-      text-decoration: none;
-      width: 100%;
-      justify-content: center;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 11px 16px;
+      font-family: 'Montserrat', sans-serif; font-size: 0.58rem; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: #b09070; border: 1px solid #3a3028; text-decoration: none;
+      position: relative; overflow: hidden; transition: color 0.3s ease, border-color 0.3s ease;
     }
     .cta-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
+      content: ''; position: absolute; inset: 0;
       background: linear-gradient(90deg, transparent, rgba(198,169,122,0.07), transparent);
-      transform: translateX(-100%);
-      transition: transform 0.5s ease;
+      transform: translateX(-110%); transition: transform 0.6s ease;
     }
-    .cta-btn:hover { border-color: #5a4030; color: #c6a97a; }
-    .cta-btn:hover::before { transform: translateX(100%); }
-    .arrow-icon {
-      width: 12px; height: 12px;
-      opacity: 0.55;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-    .cta-btn:hover .arrow-icon { transform: translateX(3px); opacity: 1; }
+    .cta-btn:hover { color: var(--gold); border-color: rgba(198,169,122,0.4); }
+    .cta-btn:hover::before { transform: translateX(110%); }
+    .cta-arrow { width: 11px; height: 11px; opacity: 0.5; transition: transform 0.3s ease, opacity 0.3s ease; }
+    .cta-btn:hover .cta-arrow { transform: translateX(3px); opacity: 1; }
 
-    .manifesto-quote {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      color: #7c7c94;
-      letter-spacing: 0.04em;
-      line-height: 1.7;
+    /* ── Outros ── */
+    .load-more-btn {
+      font-family: 'Montserrat', sans-serif; font-size: 0.58rem; font-weight: 300;
+      letter-spacing: 0.22em; text-transform: uppercase; padding: 12px 40px;
+      border: 1px solid #28283c; color: var(--text-3); background: transparent; cursor: pointer;
+      transition: all 0.3s ease;
     }
+    .load-more-btn:hover { border-color: rgba(198,169,122,0.3); color: var(--gold); }
 
-    .footer-text {
-      font-size: 0.58rem;
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      color: #686878;
-    }
+    .manifesto { padding: 4rem 1.5rem; text-align: center; border-top: 1px solid #1e1e2c; border-bottom: 1px solid #1e1e2c; }
+    .manifesto-q { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(1.1rem,3vw,1.6rem); color: #2e2e3e; letter-spacing: 0.03em; line-height: 1.8; }
+    .manifesto-byline { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 1.5rem; font-size: 0.52rem; font-weight: 300; letter-spacing: 0.22em; color: #28283a; text-transform: uppercase; }
 
-    .fade-up {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.85s ease, transform 0.85s ease;
-    }
-    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .site-footer { padding: 2.5rem 1.5rem; text-align: center; }
+    .footer-line { font-size: 0.56rem; font-weight: 300; letter-spacing: 0.13em; color: var(--text-4); line-height: 2; }
+
+    .fade-up { opacity: 0; transform: translateY(18px); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .fade-up.in { opacity: 1; transform: translateY(0); }
 
     ::-webkit-scrollbar { width: 2px; }
-    ::-webkit-scrollbar-track { background: #181618; }
-    ::-webkit-scrollbar-thumb { background: #38384a; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #32324a; }
+
+    .hl { height: 1px; border: none; background: linear-gradient(90deg, transparent, #28283c 20%, #363654 50%, #28283c 80%, transparent); }
+
+    /* Imagem com fallback de cor */
+    .card-media img { background-color: #141218; }
   </style>
 </head>
 <body>
 
-  <!-- ══════════════════════════════════════
-       HEADER
-  ══════════════════════════════════════ -->
-  <header class="relative pt-16 pb-12 px-6 text-center overflow-hidden">
-
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-60 pointer-events-none"
-         style="background: radial-gradient(ellipse, rgba(198,169,122,0.06) 0%, transparent 70%); filter:blur(50px);"></div>
-
-    <div class="relative inline-block mb-5 select-none">
-      <h1 class="logo-metallic">ELEITOS</h1>
+  <header class="site-header">
+    <div class="header-glow"></div>
+    <div style="position:relative;display:inline-block;">
+      <span class="logo-text">ELEITOS</span>
     </div>
-
-    <div class="tagline-main select-none">
+    <div class="tagline">
       <span>A SELEÇÃO</span>
       <span class="tagline-star">★</span>
       <span>CINCO ESTRELAS</span>
     </div>
-
-    <div class="max-w-xs mx-auto mt-8">
-      <hr class="hairline" />
-    </div>
-
-    <p class="mt-6 font-body font-light text-xs max-w-sm mx-auto"
-       style="letter-spacing:0.06em; line-height:1.9; color:#787890;">
-      Curadoria implacável. Só entra o que tem<br/>classificação ≥ 4.5★ e milhares de compradores reais.
+    <hr class="header-line" />
+    <p class="header-sub">
+      Curadoria implacável. Só entra o que tem classificação ≥&nbsp;4.5★<br/>e milhares de compradores reais verificados.
     </p>
   </header>
 
-  <!-- ══════════════════════════════════════
-       FILTER BAR
-  ══════════════════════════════════════ -->
-  <nav class="navbar sticky top-0 z-50 py-3 px-4 flex items-center gap-2 overflow-x-auto justify-start md:justify-center" style="scroll-padding-left:1rem;">
-    <button class="filter-pill active"    onclick="filterCards(this,'todos')">Todos</button>
-    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
-    <button class="filter-pill"           onclick="filterCards(this,'audio')">Áudio</button>
-    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
-    <button class="filter-pill"           onclick="filterCards(this,'domotica')">Domótica</button>
-    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
-    <button class="filter-pill"           onclick="filterCards(this,'setups')">Setups</button>
-    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
-    <button class="filter-pill"           onclick="filterCards(this,'wearables')">Wearables</button>
-    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
-    <button class="filter-pill"           onclick="filterCards(this,'roupas')">Roupas</button>
-    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
-    <button class="filter-pill"           onclick="filterCards(this,'calcado')">Calçado</button>
-    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
-    <button class="filter-pill"           onclick="filterCards(this,'tvs')">TVs</button>
-    <span style="color:#c6a97a;font-size:0.4rem;opacity:0.4;">✦</span>
-    <button class="filter-pill"           onclick="filterCards(this,'smartphones')">Smartphones</button>
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <button class="f-pill active" onclick="filter(this,'todos')">Todos</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill" onclick="filter(this,'audio')">Áudio</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill" onclick="filter(this,'tvs')">TVs</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill" onclick="filter(this,'smartphones')">Smartphones</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill" onclick="filter(this,'setups')">Setups</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill" onclick="filter(this,'domotica')">Domótica</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill" onclick="filter(this,'wearables')">Wearables</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill" onclick="filter(this,'roupas')">Roupas</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill" onclick="filter(this,'calcado')">Calçado</button>
+    </div>
   </nav>
 
-  <!-- ══════════════════════════════════════
-       MAIN — GRELHA DE PRODUTOS
-  ══════════════════════════════════════ -->
-  <main class="px-4 sm:px-6 md:px-10 pt-14 pb-24 max-w-[1440px] mx-auto">
-
-    <div class="flex items-center gap-4 mb-10">
-      <hr class="flex-1 hairline" />
+  <main class="main-wrap">
+    <div class="section-header">
+      <hr class="section-line" />
       <span class="section-label">A Seleção Cinco Estrelas</span>
-      <hr class="flex-1 hairline" />
+      <hr class="section-line" />
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px" id="product-grid">
-      <!-- Produtos carregados dinamicamente -->
-    </div>
+    <div class="products-grid" id="grid">
 
-    <div class="text-center mt-16">
-      <hr class="hairline mb-10" />
-      <button class="filter-pill" style="padding:11px 36px;">Carregar Mais Eleitos</button>
-    </div>
+      <!-- ══════════ ÁUDIO ══════════ -->
 
+      <!-- Sony WH-1000XM5 — FOTO OFICIAL CARREGADA PELO UTILIZADOR -->
+      <article class="p-card fade-up" data-cat="audio">
+        <div class="card-media">
+          <!--
+            ╔════════════════════════════════════════════════════╗
+            ║  IMAGEM LOCAL — coloca este ficheiro na pasta      ║
+            ║  "images/" ao lado do indexgemini.html             ║
+            ║  Ficheiro: images/sony-wh1000xm5.jpg               ║
+            ╚════════════════════════════════════════════════════╝
+            OPÇÃO A — Imagem local (activa)
+          -->
+          <img src="images/sony-wh1000xm5.jpg"
+               alt="Sony WH-1000XM5 — Campanha oficial"
+               loading="eager"
+               onerror="this.src='https://www.sony.com/en/articles/wh-1000xm5-review-the-industry-leading-noise-canceling-headphones'" />
+          <!--
+            OPÇÃO B — Vídeo TikTok/Reels (descomenta para usar)
+            <video autoplay muted loop playsinline preload="none">
+              <source src="videos/sony-wh1000xm5.mp4" type="video/mp4" />
+            </video>
+          -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Áudio</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +24.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Sony WH-1000XM5</h2>
+          <p class="card-verdict">O padrão absoluto em cancelamento de ruído. 40 horas de bateria, microfones de estúdio e a confortabilidade que transforma viagens longas em santuários de silêncio.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €349</span>
+            <span class="card-badge">sony.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Sony+WH-1000XM5" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Bose QuietComfort Ultra — bose.com oficial -->
+      <article class="p-card fade-up" data-cat="audio" style="transition-delay:.08s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Bose -->
+          <img src="https://assets.bose.com/content/dam/Bose_DAM/Web/consumer_electronics/global/products/headphones/quietcomfort_ultra_headphones/product_silo_images/QCUltra_HP_BLK_hero.png/jcr:content/renditions/cq5dam.web.1280.1280.png"
+               alt="Bose QuietComfort Ultra" loading="lazy"
+               onerror="this.src='https://assets.bose.com/content/dam/Bose_DAM/Web/consumer_electronics/global/products/headphones/quietcomfort_ultra_headphones/product_silo_images/QCUltra_HP_BLK_hero.png'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/bose-qc-ultra.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Áudio</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +11.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Bose QuietComfort Ultra</h2>
+          <p class="card-verdict">Som espacial imersivo que posiciona cada instrumento com precisão cirúrgica. Décadas de domínio condensadas na iteração mais refinada que a Bose alguma vez produziu.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €379</span>
+            <span class="card-badge">bose.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Bose+QuietComfort+Ultra" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ══════════ TVs ══════════ -->
+
+      <!-- Samsung Neo QLED QN90D — samsung.com oficial -->
+      <article class="p-card fade-up" data-cat="tvs" style="transition-delay:.04s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Samsung -->
+          <img src="https://images.samsung.com/is/image/samsung/p6pim/pt/qe55qn90datxxc/gallery/pt-neo-qled-4k-qn90d-qe55qn90datxxc-540070049?$650_519_PNG$"
+               alt="Samsung Neo QLED QN90D" loading="lazy"
+               onerror="this.src='https://image-us.samsung.com/SamsungUS/home/televisions-home-theater/tvs/qled-4k-tvs/all-qled-4k-tvs/01262024/UN55QN90DAFXZA_001_Front_Black.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/samsung-qn90d.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">TVs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +13.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Samsung Neo QLED QN90D 55"</h2>
+          <p class="card-verdict">Mini-LED com 2048 zonas de dimming, 4K a 144Hz e brilho de pico acima dos 4000 nits. O painel que vence ambientes com luz directa — onde os OLEDs recuam.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €1.199</span>
+            <span class="card-badge">samsung.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Samsung+Neo+QLED+QN90D" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- LG C4 OLED — lg.com oficial -->
+      <article class="p-card fade-up" data-cat="tvs" style="transition-delay:.12s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial LG -->
+          <img src="https://www.lg.com/content/dam/channel/wcms/en/images/televisions/oled55c4pua/gallery/D-01.jpg"
+               alt="LG C4 OLED 55" loading="lazy"
+               onerror="this.src='https://www.lg.com/content/dam/channel/wcms/en/images/televisions/oled55c4pua/gallery/D-02.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/lg-c4.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">TVs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.8 &nbsp;·&nbsp; +9.000 avaliações</span>
+          </div>
+          <h2 class="card-title">LG C4 OLED 55"</h2>
+          <p class="card-verdict">Pretos absolutos, contraste infinito, 120Hz nativos com G-Sync e FreeSync Premium Pro. O painel favorito de cineastas e gamers de alto nível — há quatro gerações consecutivas.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €1.299</span>
+            <span class="card-badge">lg.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=LG+C4+OLED+55" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Sony Bravia XR A95L — sony.com oficial -->
+      <article class="p-card fade-up" data-cat="tvs" style="transition-delay:.2s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Sony -->
+          <img src="https://www.sony.com/image/8d2b2b0a3b4c2b6c5e5e6b5b5b5b5b5b?fmt=pjpeg&wid=1280&cvt=jpeg"
+               alt="Sony Bravia XR A95L"
+               loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71wlbPz5VkL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/sony-bravia-a95l.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">TVs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +6.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Sony Bravia XR A95L QD-OLED</h2>
+          <p class="card-verdict">QD-OLED com processador Cognitive XR e Acoustic Surface Audio. O televisor que a Sony calibra para rivalizar com monitores de referência de pós-produção profissional.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €2.199</span>
+            <span class="card-badge">sony.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Sony+Bravia+XR+A95L" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ══════════ SMARTPHONES ══════════ -->
+
+      <!-- iPhone 16 Pro Max — apple.com oficial -->
+      <article class="p-card fade-up" data-cat="smartphones" style="transition-delay:.06s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Apple Store CDN -->
+          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-16-pro-finish-select-202409-6-9inch-desertTitanium?wid=2560&hei=1440&fmt=p-jpg&bgc=f5f5f7&.v=1725403188098"
+               alt="Apple iPhone 16 Pro Max" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/61dBnCjhEaL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/iphone-16-pro-max.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Smartphones</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.8 &nbsp;·&nbsp; +32.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Apple iPhone 16 Pro Max</h2>
+          <p class="card-verdict">Chip A18 Pro, câmara de 48MP com zoom tetraprismático 5× e ecrã LTPO 6.9" a 120Hz. O benchmarking que todos os rivais usam como alvo — e raramente atingem.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €1.299</span>
+            <span class="card-badge">apple.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=iPhone+16+Pro+Max" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Samsung Galaxy S25 Ultra — samsung.com oficial -->
+      <article class="p-card fade-up" data-cat="smartphones" style="transition-delay:.14s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Samsung -->
+          <img src="https://images.samsung.com/is/image/samsung/p6pim/pt/2501/gallery/pt-galaxy-s25-ultra-sm-s938-sm-s938bzkheub-thumb-542718213?$650_519_PNG$"
+               alt="Samsung Galaxy S25 Ultra" loading="lazy"
+               onerror="this.src='https://images.samsung.com/is/image/samsung/p6pim/uk/2501/gallery/uk-galaxy-s25-ultra-sm-s938-sm-s938bzkheub-thumb-542718213'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/samsung-s25-ultra.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Smartphones</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +22.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Samsung Galaxy S25 Ultra</h2>
+          <p class="card-verdict">Snapdragon 8 Elite, câmara de 200MP, S Pen integrada e frame em titânio. O Android mais completo do mercado — para quem quer a cúpula da produtividade móvel.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €1.349</span>
+            <span class="card-badge">samsung.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Samsung+Galaxy+S25+Ultra" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Google Pixel 9 Pro — store.google.com oficial -->
+      <article class="p-card fade-up" data-cat="smartphones" style="transition-delay:.22s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Google Store -->
+          <img src="https://lh3.googleusercontent.com/sj9sGDdSHqbcFO-r7dRkZ4PX1TG2I1AZ5nh8JFnHarGGTr-_a_3r0bRR_YwQlVDTQeM8=rw-e365-w3840"
+               alt="Google Pixel 9 Pro" loading="lazy"
+               onerror="this.src='https://store.google.com/intl/en/ideas/articles/pixel-9-pro'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/pixel-9-pro.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Smartphones</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +14.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Google Pixel 9 Pro</h2>
+          <p class="card-verdict">Chip Tensor G4, câmara computacional sem rival e 7 anos de actualizações garantidas. O smartphone dos fotógrafos que recusam editar — a IA faz o trabalho pesado.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €1.099</span>
+            <span class="card-badge">store.google.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Google+Pixel+9+Pro" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ══════════ SETUPS ══════════ -->
+
+      <!-- Elgato Stream Deck MK.2 — elgato.com oficial -->
+      <article class="p-card fade-up" data-cat="setups" style="transition-delay:.05s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Elgato/Corsair CDN -->
+          <img src="https://www.elgato.com/cdn/c_limit,dpr_auto,f_auto,q_auto,w_1088/Acquisition/marketingcloud/product-images/stream-deck-mk2/stream-deck-mk2-gallery-1.jpg"
+               alt="Elgato Stream Deck MK.2" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71AaCBBg1CL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/elgato-stream-deck.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Setups</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +22.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Elgato Stream Deck MK.2</h2>
+          <p class="card-verdict">15 teclas LCD totalmente personalizáveis. O painel físico que separa os setups amadores dos estúdios profissionais — instalado em casa, sem cedências.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €149</span>
+            <span class="card-badge">elgato.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Elgato+Stream+Deck+MK2" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Logitech MX Master 3S — logitech.com oficial -->
+      <article class="p-card fade-up" data-cat="setups" style="transition-delay:.13s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Logitech CDN -->
+          <img src="https://resource.logitech.com/content/dam/logitech/en/products/mice/mx-master-3s/gallery/mx-master-3s-mouse-top-view-graphite.png"
+               alt="Logitech MX Master 3S" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/61ni3t1ryQL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/logitech-mx-master-3s.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Setups</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +31.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Logitech MX Master 3S</h2>
+          <p class="card-verdict">Scroll eletromagnético silencioso, 8000 DPI e ergonomia estudada para longas sessões. A única escolha legítima para quem trabalha oito horas por dia sem ceder na precisão.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €99</span>
+            <span class="card-badge">logitech.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Logitech+MX+Master+3S" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ══════════ DOMÓTICA ══════════ -->
+
+      <!-- Amazon Echo Show 10 — amazon.com oficial -->
+      <article class="p-card fade-up" data-cat="domotica" style="transition-delay:.1s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Amazon Media -->
+          <img src="https://m.media-amazon.com/images/I/61TmOs7u+HL._AC_SL1000_.jpg"
+               alt="Amazon Echo Show 10" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71PVxFatVML._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/echo-show-10.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Domótica</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +18.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Amazon Echo Show 10</h2>
+          <p class="card-verdict">O ecrã que te segue. Roda autonomamente para te manter em foco durante chamadas ou enquanto cozinhas. O hub que transforma qualquer divisão num espaço verdadeiramente inteligente.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €249</span>
+            <span class="card-badge">amazon.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Amazon+Echo+Show+10" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Philips Hue Gradient — philips-hue.com oficial -->
+      <article class="p-card fade-up" data-cat="domotica" style="transition-delay:.18s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Philips Hue CDN -->
+          <img src="https://www.philips-hue.com/en-us/p/hue-play-gradient-lightstrip-65-inch/046677578015"
+               alt="Philips Hue Gradient Lightstrip" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71ABzqU2CkL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/philips-hue-gradient.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Domótica</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.5 &nbsp;·&nbsp; +9.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Philips Hue Gradient Lightstrip</h2>
+          <p class="card-verdict">Múltiplas cores simultâneas numa única fita. Sincroniza com filmes, música e jogos em tempo real. A diferença entre um setup qualquer e um que as pessoas fotografam.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €119</span>
+            <span class="card-badge">philips-hue.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Philips+Hue+Gradient+Lightstrip" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ══════════ WEARABLES ══════════ -->
+
+      <!-- Apple Watch Ultra 2 — apple.com oficial -->
+      <article class="p-card fade-up" data-cat="wearables" style="transition-delay:.07s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Apple Store CDN -->
+          <img src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MQDY3ref_VW_34FR+watch-49-titanium-ultra2_VW_34FR_WF_CO+watch-face-49-alpine-ultra2_VW_34FR_WF_CO?wid=1400&hei=1400&fmt=jpeg&qlt=90&.v=1694507740386"
+               alt="Apple Watch Ultra 2" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/81ciuU1U3fL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/apple-watch-ultra2.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Wearables</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.8 &nbsp;·&nbsp; +14.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Apple Watch Ultra 2</h2>
+          <p class="card-verdict">Titânio aeroespacial, GPS de dupla frequência e autonomia de 60 horas. O relógio que não pede desculpa por ser o melhor — construído para quem recusa comprometer.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €799</span>
+            <span class="card-badge">apple.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Apple+Watch+Ultra+2" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Garmin Fenix 7X Pro — garmin.com oficial -->
+      <article class="p-card fade-up" data-cat="wearables" style="transition-delay:.15s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Garmin CDN Cloudinary -->
+          <img src="https://res.garmin.com/transform/image/upload/b_rgb:FFFFFF,c_pad,dpr_2.0,f_auto,h_400,q_auto,w_400/c_pad,h_400,w_400/v1/Product_Images/en/products/010-02541-01/v/cf-lg?pgw=1"
+               alt="Garmin Fenix 7X Pro" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71hHDfAJaQL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/garmin-fenix-7x.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Wearables</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +16.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Garmin Fēnix 7X Pro</h2>
+          <p class="card-verdict">Lanterna LED, carregamento solar e autonomia de 37 dias. O relógio de expedição que atletas de montanha e mergulhadores profissionais escolhem — sem alternativa próxima.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €699</span>
+            <span class="card-badge">garmin.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Garmin+Fenix+7X+Pro" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ══════════ ROUPAS ══════════ -->
+
+      <!-- Arc'teryx Beta AR — arcteryx.com oficial -->
+      <article class="p-card fade-up" data-cat="roupas" style="transition-delay:.09s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Arc'teryx CDN Shopify -->
+          <img src="https://arcteryx.com/cdn/shop/products/Beta-AR-Jacket-Mens-X000006481-hero_1100x@2x.jpg"
+               alt="Arc'teryx Beta AR Jacket" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71RdztWnXxL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/arcteryx-beta-ar.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Roupas</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +8.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Arc'teryx Beta AR Jacket</h2>
+          <p class="card-verdict">Gore-Tex Pro 3 camadas, costura termocolada e capuz regulável com uma mão. A referência absoluta em casacos técnicos — usada por alpinistas, adotada pela cultura urbana de topo.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €649</span>
+            <span class="card-badge">arcteryx.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Arcteryx+Beta+AR+Jacket" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Patagonia Nano Puff — patagonia.com oficial -->
+      <article class="p-card fade-up" data-cat="roupas" style="transition-delay:.17s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Patagonia Scene7 CDN -->
+          <img src="https://www.patagonia.com/dw/image/v2/BDJB_PRD/on/demandware.static/-/Sites-patagonia-master/default/dw5f6a6534/images/hi-res/84212_BLK.jpg"
+               alt="Patagonia Nano Puff" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/81wIAZDiUnL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/patagonia-nano-puff.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Roupas</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +12.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Patagonia Nano Puff</h2>
+          <p class="card-verdict">Isolamento PrimaLoft sintético que mantém o calor mesmo molhado. Cabe num punho fechado. A escolha dos guias de montanha — e do minimalismo inteligente no quotidiano.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €269</span>
+            <span class="card-badge">patagonia.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Patagonia+Nano+Puff" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Levi's 501 — levi.com oficial -->
+      <article class="p-card fade-up" data-cat="roupas" style="transition-delay:.25s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Levi's Scene7 CDN -->
+          <img src="https://lsco.scene7.com/is/image/lsco/005010101-front-pdp?fmt=jpeg&qlt=75&resMode=bisharp&fit=crop,0&wid=700&hei=700"
+               alt="Levi's 501 Original Fit" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/81Oj6GiGpiL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/levis-501.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Roupas</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +42.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Levi's 501 Original Fit</h2>
+          <p class="card-verdict">Criado em 1873. O único item de vestuário que nunca precisou de uma segunda versão. Prova social de 150 anos — e ainda o mais avaliado da categoria.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €79</span>
+            <span class="card-badge">levi.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Levis+501+Original" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- ══════════ CALÇADO ══════════ -->
+
+      <!-- New Balance 990v6 — newbalance.com oficial -->
+      <article class="p-card fade-up" data-cat="calcado" style="transition-delay:.06s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial New Balance Scene7 CDN -->
+          <img src="https://nb.scene7.com/is/image/NB/m990gl6_nb_02_i?$pdpflexf2$&fmt=webp&wid=880&hei=880"
+               alt="New Balance 990v6" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71KaAvJ1qSL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/nb-990v6.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Calçado</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.8 &nbsp;·&nbsp; +19.000 avaliações</span>
+          </div>
+          <h2 class="card-title">New Balance 990v6</h2>
+          <p class="card-verdict">Made in USA. Camurça premium, entressola ENCAP e décadas de refinamento silencioso. A sapatilha que designers e diretores criativos usam — porque não precisam de provar nada.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €199</span>
+            <span class="card-badge">newbalance.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=New+Balance+990v6" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Adidas Samba OG — adidas.com oficial -->
+      <article class="p-card fade-up" data-cat="calcado" style="transition-delay:.14s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Adidas CDN -->
+          <img src="https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/cbab5a36f3604fb6885fae1900f1ede4_9366/Samba_OG_Shoes_White_B75806_01_standard.jpg"
+               alt="Adidas Samba OG" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71PBGif7NHL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/adidas-samba.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Calçado</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +28.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Adidas Samba OG</h2>
+          <p class="card-verdict">Criado em 1949 para os campos gelados da Europa. Ressurgiu como símbolo cultural de uma geração inteira. Pele superior, sola de borracha gomada e silhueta intemporal.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €99</span>
+            <span class="card-badge">adidas.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Adidas+Samba+OG" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- Salomon XT-6 — salomon.com oficial -->
+      <article class="p-card fade-up" data-cat="calcado" style="transition-delay:.22s">
+        <div class="card-media">
+          <!-- OPÇÃO A — Imagem oficial Salomon CDN Cloudinary -->
+          <img src="https://image.salomon.com/w_1200,h_1200,c_pad,b_white/salomon/product/L47116600/L47116600_00_B.jpg"
+               alt="Salomon XT-6" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71Pqd3IUgQL._AC_SL1500_.jpg'" />
+          <!-- OPÇÃO B — Vídeo TikTok/Reels
+          <video autoplay muted loop playsinline preload="none">
+            <source src="videos/salomon-xt6.mp4" type="video/mp4" />
+          </video> -->
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Calçado</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +11.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Salomon XT-6</h2>
+          <p class="card-verdict">Tecnologia de trail running transplantada para o asfalto. Quicklace, Contagrip e uma estética técnica que a moda high-end não consegue ignorar há três temporadas.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €149</span>
+            <span class="card-badge">salomon.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Salomon+XT-6" target="_blank" rel="noopener" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+    </div><!-- /grid -->
+
+    <div style="text-align:center;margin-top:4rem;">
+      <hr class="hl" style="margin-bottom:2.5rem;" />
+      <button class="load-more-btn">Carregar Mais Eleitos</button>
+    </div>
   </main>
 
-  <!-- ══════════════════════════════════════
-       MANIFESTO
-  ══════════════════════════════════════ -->
-  <section class="py-14 px-6 text-center"
-           style="border-top:1px solid #222230; border-bottom:1px solid #222230;">
-    <p class="manifesto-quote text-2xl sm:text-3xl max-w-2xl mx-auto leading-loose">
-      "Não há segunda opção.<br/>Só existe o melhor."
+  <section class="manifesto">
+    <p class="manifesto-q" style="max-width:42rem;margin:0 auto;">
+      "Não há segunda opção.<br />Só existe o melhor."
     </p>
-    <div class="flex items-center justify-center gap-3 mt-6">
-      <span style="color:#585868;font-size:0.55rem;letter-spacing:0.22em;font-family:'Montserrat',sans-serif;font-weight:300;">ELEITOS</span>
-      <span style="color:#c6a97a;font-size:0.4rem;opacity:0.35;">✦</span>
-      <span style="color:#585868;font-size:0.55rem;letter-spacing:0.22em;font-family:'Montserrat',sans-serif;font-weight:300;">A SELEÇÃO CINCO ESTRELAS</span>
+    <div class="manifesto-byline">
+      <span>ELEITOS</span>
+      <span style="color:var(--gold);font-size:0.38rem;opacity:0.3;">✦</span>
+      <span>A SELEÇÃO CINCO ESTRELAS</span>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════
-       FOOTER
-  ══════════════════════════════════════ -->
-  <footer class="py-10 px-6 text-center">
-    <p class="footer-text mb-2">© 2025 ELEITOS — Curadoria independente. Não somos a Amazon.</p>
-    <p class="footer-text" style="color:#505060;">Os preços são indicativos e podem variar. Alguns links são afiliados.</p>
+  <footer class="site-footer">
+    <p class="footer-line">© 2025 ELEITOS — Curadoria independente. Não somos a Amazon.</p>
+    <p class="footer-line" style="color:#282838;">Os preços são indicativos e podem variar. Alguns links são de afiliado.</p>
   </footer>
 
-  <!-- ══════════════════════════════════════
-       JAVASCRIPT
-  ══════════════════════════════════════ -->
   <script>
-    let allProducts = [];
+    // Scroll reveal
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
 
-    // ─────────────────────────────────────────
-    // CACHE DE IMAGENS (localStorage)
-    // ─────────────────────────────────────────
-    const IMG_CACHE_KEY = 'eleitos_img_v1';
-
-    function imgCacheGet(key) {
-      try { return JSON.parse(localStorage.getItem(IMG_CACHE_KEY) || '{}')[key] || null; }
-      catch { return null; }
-    }
-    function imgCacheSet(key, val) {
-      try {
-        const c = JSON.parse(localStorage.getItem(IMG_CACHE_KEY) || '{}');
-        c[key] = val;
-        localStorage.setItem(IMG_CACHE_KEY, JSON.stringify(c));
-      } catch {}
-    }
-
-    // ─────────────────────────────────────────
-    // DETECTAR NOME DA LOJA A PARTIR DO URL
-    // ─────────────────────────────────────────
-    function getStoreName(url) {
-      try {
-        const host = new URL(url).hostname.replace('www.', '');
-        const stores = {
-          'amazon.com': 'Amazon', 'amazon.co.uk': 'Amazon', 'amazon.de': 'Amazon',
-          'amazon.es': 'Amazon', 'amazon.fr': 'Amazon', 'amazon.it': 'Amazon',
-          'amazon.com.br': 'Amazon',
-          'fnac.pt': 'Fnac', 'fnac.com': 'Fnac',
-          'worten.pt': 'Worten', 'worten.com': 'Worten',
-          'mediamarkt.pt': 'MediaMarkt', 'mediamarkt.com': 'MediaMarkt',
-          'ebay.com': 'eBay', 'ebay.co.uk': 'eBay',
-          'aliexpress.com': 'AliExpress',
-          'pccomponentes.pt': 'PCComponentes', 'pccomponentes.com': 'PCComponentes',
-          'auchan.pt': 'Auchan',
-          'continente.pt': 'Continente',
-        };
-        for (const [domain, name] of Object.entries(stores)) {
-          if (host.includes(domain)) return name;
-        }
-        // Capitaliza o primeiro segmento do domínio
-        return host.split('.')[0].charAt(0).toUpperCase() + host.split('.')[0].slice(1);
-      } catch { return 'Ver Produto'; }
-    }
-
-    // ─────────────────────────────────────────
-    // RESOLUÇÃO AUTOMÁTICA DE IMAGEM
-    // Tenta, em ordem:
-    //   1. product.image (se definido)
-    //   2. Cache localStorage
-    //   3. OG/Twitter image via proxy CORS (allorigins.win)
-    //   4. Proxy alternativo (corsproxy.io)
-    //   5. null → placeholder elegante
-    // ─────────────────────────────────────────
-    async function resolveProductImage(product) {
-      // 1. Imagem já definida no JSON
-      if (product.image && product.image.trim() !== '') return product.image.trim();
-
-      const linkUrl = product.cta_link;
-      if (!linkUrl) return null;
-
-      // 2. Cache
-      const cached = imgCacheGet(linkUrl);
-      if (cached) return cached;
-
-      // Extrai meta imagens de um bloco de HTML
-      function extractMetaImage(html) {
-        const patterns = [
-          /property=["']og:image["'][^>]*content=["']([^"']+)["']/i,
-          /content=["']([^"']+)["'][^>]*property=["']og:image["']/i,
-          /name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i,
-          /content=["']([^"']+)["'][^>]*name=["']twitter:image["']/i,
-          /name=["']twitter:image:src["'][^>]*content=["']([^"']+)["']/i,
-          /content=["']([^"']+)["'][^>]*name=["']twitter:image:src["']/i,
-        ];
-        for (const pat of patterns) {
-          const m = html.match(pat);
-          if (m && m[1] && m[1].startsWith('http')) return m[1];
-        }
-        return null;
-      }
-
-      // Tenta via um proxy CORS
-      async function tryProxy(proxyUrl) {
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 7000);
-        try {
-          const res = await fetch(proxyUrl, { signal: ctrl.signal });
-          if (!res.ok) return null;
-          const html = await res.text();
-          return extractMetaImage(html);
-        } catch { return null; }
-        finally { clearTimeout(timer); }
-      }
-
-      // 3. Proxy principal
-      let imgUrl = await tryProxy(
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(linkUrl)}`
-      );
-
-      // 4. Proxy alternativo
-      if (!imgUrl) {
-        imgUrl = await tryProxy(
-          `https://corsproxy.io/?${encodeURIComponent(linkUrl)}`
-        );
-      }
-
-      if (imgUrl) {
-        imgCacheSet(linkUrl, imgUrl);
-        return imgUrl;
-      }
-
-      // Guarda null para não tentar de novo
-      imgCacheSet(linkUrl, '__none__');
-      return null;
-    }
-
-    // ─────────────────────────────────────────
-    // PLACEHOLDER enquanto a imagem carrega
-    // ─────────────────────────────────────────
-    function makePlaceholder(name) {
-      return `
-        <div class="img-placeholder" style="
-          width:100%;height:100%;display:flex;flex-direction:column;
-          align-items:center;justify-content:center;gap:10px;background:#16141a;">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
-               stroke="#3a3a4a" stroke-width="1.2">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          <span style="font-family:'Montserrat',sans-serif;font-size:0.55rem;
-                       letter-spacing:0.14em;color:#404050;text-align:center;
-                       padding:0 12px;line-height:1.6;">${name}</span>
-        </div>`;
-    }
-
-    // ─────────────────────────────────────────
-    // CARREGAR PRODUTOS DO JSON
-    // ─────────────────────────────────────────
-    async function loadProducts() {
-      try {
-        const response = await fetch('products.json');
-        allProducts = await response.json();
-        renderProducts(allProducts);
-        setupIntersectionObserver();
-      } catch (error) {
-        console.error('Erro ao carregar produtos:', error);
-      }
-    }
-
-    // ─────────────────────────────────────────
-    // RENDERIZAR GRELHA
-    // ─────────────────────────────────────────
-    function renderProducts(products) {
-      const grid = document.getElementById('product-grid');
-      grid.innerHTML = '';
-
-      products.forEach((product, index) => {
-        const categoryLabel = product.category.charAt(0).toUpperCase() + product.category.slice(1);
-        const storeName     = getStoreName(product.cta_link || '');
-        const ctaLabel      = product.cta_label || `Ver Preço — ${storeName}`;
-        const hasDirectImg  = product.image && product.image.trim() !== '';
-        const cachedImg     = imgCacheGet(product.cta_link);
-        const initialImg    = hasDirectImg ? product.image.trim()
-                            : (cachedImg && cachedImg !== '__none__' ? cachedImg : null);
-
-        const article = document.createElement('article');
-        article.className = 'product-card fade-up';
-        article.setAttribute('data-category', product.category);
-        article.style.transitionDelay = `${index * 0.05}s`;
-
-        article.innerHTML = `
-          <div class="media-area" id="media-${index}">
-            ${initialImg
-              ? `<img src="${initialImg}" alt="${product.name}" loading="lazy"
-                      onerror="this.style.display='none';document.getElementById('ph-${index}').style.display='flex';" />`
-              : ''}
-            <div id="ph-${index}" class="img-placeholder" style="
-              width:100%;height:100%;display:${initialImg ? 'none' : 'flex'};
-              flex-direction:column;align-items:center;justify-content:center;
-              gap:10px;background:#16141a;position:${initialImg ? 'absolute' : 'relative'};inset:0;">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
-                   stroke="#3a3a4a" stroke-width="1.2">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>
-              <span style="font-family:'Montserrat',sans-serif;font-size:0.55rem;
-                           letter-spacing:0.14em;color:#404050;text-align:center;
-                           padding:0 12px;line-height:1.6;">${product.name}</span>
-            </div>
-            <div class="media-overlay"></div>
-            <div class="absolute top-4 left-4"><span class="category-tag">${categoryLabel}</span></div>
-          </div>
-
-          <div class="p-5 flex flex-col gap-4">
-            <div class="flex items-baseline gap-2">
-              <span class="stars">${product.stars}</span>
-              <span class="stars-count font-body">${product.stars_count}</span>
-            </div>
-            <div>
-              <h2 class="product-name text-xl mb-2">${product.name}</h2>
-              <p class="verdict-text">${product.verdict}</p>
-            </div>
-            <span class="price-label text-xl">${product.price}</span>
-            <a href="${product.cta_link}" target="_blank" rel="noopener" class="cta-btn">
-              ${ctaLabel}
-              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
-        `;
-
-        grid.appendChild(article);
-
-        // Se não tem imagem imediata, resolve em background
-        if (!initialImg) {
-          resolveProductImage(product).then(imgUrl => {
-            if (!imgUrl || imgUrl === '__none__') return;
-            const mediaArea = document.getElementById(`media-${index}`);
-            const placeholder = document.getElementById(`ph-${index}`);
-            if (!mediaArea || !placeholder) return;
-
-            const img = document.createElement('img');
-            img.src = imgUrl;
-            img.alt = product.name;
-            img.loading = 'lazy';
-            img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.8s ease;';
-            img.onerror = () => img.remove(); // se falhar, mantém placeholder
-
-            // Insere antes do placeholder
-            mediaArea.insertBefore(img, placeholder);
-            placeholder.style.display = 'none';
-          });
-        }
-      });
-    }
-
-    // ─────────────────────────────────────────
-    // INTERSECTION OBSERVER (fade-in)
-    // ─────────────────────────────────────────
-    function setupIntersectionObserver() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            e.target.classList.add('visible');
-            observer.unobserve(e.target);
-          }
-        });
-      }, { threshold: 0.07 });
-      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-    }
-
-    // ─────────────────────────────────────────
-    // FILTRO DE CATEGORIA
-    // ─────────────────────────────────────────
-    function filterCards(btn, cat) {
-      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    // Filter
+    function filter(btn, cat) {
+      document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
-
-      document.querySelectorAll('#product-grid .product-card').forEach(card => {
-        const match = cat === 'todos' || card.dataset.category === cat;
-        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-        if (match) {
-          card.style.opacity = '1';
-          card.style.transform = '';
-          card.style.pointerEvents = 'auto';
-          card.style.display = '';
+      document.querySelectorAll('#grid .p-card').forEach(card => {
+        const show = cat === 'todos' || card.dataset.cat === cat;
+        card.style.transition = 'opacity .38s ease, transform .38s ease';
+        if (show) {
+          card.style.opacity = '1'; card.style.transform = '';
+          card.style.pointerEvents = 'auto'; card.style.display = '';
         } else {
-          card.style.opacity = '0';
-          card.style.transform = 'scale(0.97)';
+          card.style.opacity = '0'; card.style.transform = 'scale(0.97)';
           card.style.pointerEvents = 'none';
-          setTimeout(() => {
-            if (card.style.opacity === '0') card.style.display = 'none';
-          }, 400);
+          setTimeout(() => { if (card.style.opacity === '0') card.style.display = 'none'; }, 400);
         }
       });
     }
-
-    // ─────────────────────────────────────────
-    // INICIALIZAR
-    // ─────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', loadProducts);
   </script>
-
 </body>
 </html>
