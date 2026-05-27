@@ -1312,6 +1312,21 @@
           setTimeout(() => { if (card.style.opacity === '0') card.style.display = 'none'; }, 400);
         }
       });
+
+      // Divider: só mostra label Estreias na aba Estreias ou Todos
+      const divider = document.querySelector('.estreias-divider');
+      const dividerLabel = divider ? divider.querySelector('.section-label') : null;
+      if (divider && dividerLabel) {
+        if (cat === 'estreias' || cat === 'todos') {
+          divider.style.display = '';
+          dividerLabel.textContent = cat === 'estreias'
+            ? '✦ Estreias — Novidades Cinco Estrelas'
+            : '✦ Estreias — Novidades Cinco Estrelas';
+        } else {
+          // Noutra categoria: esconde o divisor por completo
+          divider.style.display = 'none';
+        }
+      }
     }
   </script>
 </body>
