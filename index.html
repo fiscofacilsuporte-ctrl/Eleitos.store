@@ -269,6 +269,36 @@
 
     .hl { height: 1px; border: none; background: linear-gradient(90deg, transparent, #28283c 20%, #363654 50%, #28283c 80%, transparent); }
 
+    /* ── Botão Contacto ── */
+    .contact-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-family: 'Montserrat', sans-serif; font-size: 0.56rem; font-weight: 300;
+      letter-spacing: 0.22em; text-transform: uppercase; padding: 12px 40px;
+      border: 1px solid #28283c; color: var(--text-3); background: transparent;
+      text-decoration: none; cursor: pointer; transition: all 0.3s ease; margin-top: 1rem;
+    }
+    .contact-btn:hover { border-color: rgba(198,169,122,0.3); color: var(--gold); }
+    .contact-btn svg { width: 11px; height: 11px; opacity: 0.45; transition: opacity 0.3s; }
+    .contact-btn:hover svg { opacity: 1; }
+
+    /* ── Botões Partilha ── */
+    .share-bar {
+      display: flex; align-items: center; justify-content: center; gap: 18px;
+      margin-top: 1.6rem;
+    }
+    .share-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Montserrat', sans-serif; font-size: 0.48rem; font-weight: 300;
+      letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
+      color: var(--text-4); border: 1px solid #1e1e2e; padding: 6px 14px;
+      transition: all 0.3s ease; background: transparent;
+    }
+    .share-btn svg { width: 10px; height: 10px; opacity: 0.5; transition: opacity 0.3s; flex-shrink: 0; }
+    .share-btn:hover svg { opacity: 1; }
+    .share-btn.ig:hover  { color: #c77dff; border-color: rgba(199,125,255,0.3); }
+    .share-btn.fb:hover  { color: #7eb3f7; border-color: rgba(126,179,247,0.3); }
+    .share-btn.wa:hover  { color: #6fcf97; border-color: rgba(111,207,151,0.3); }
+
     /* Imagem com fallback de cor */
     .card-media img { background-color: #141218; }
   </style>
@@ -1270,6 +1300,12 @@
     <div style="text-align:center;margin-top:4rem;">
       <hr class="hl" style="margin-bottom:2.5rem;" />
       <button class="load-more-btn">Carregar Mais Eleitos</button>
+      <div style="margin-top:1.2rem;">
+        <a href="mailto:eleitos@proton.me" class="contact-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Contacto
+        </a>
+      </div>
     </div>
   </main>
 
@@ -1281,6 +1317,31 @@
       <span>ELEITOS</span>
       <span style="color:var(--gold);font-size:0.38rem;opacity:0.3;">✦</span>
       <span>A SELEÇÃO CINCO ESTRELAS</span>
+    </div>
+    <div class="share-bar">
+      <!-- Instagram — Web Share API (abre menu nativo) ou copia link -->
+      <button onclick="shareInstagram()" class="share-btn ig" title="Partilhar via Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+        </svg>
+        <span id="ig-label">Instagram</span>
+      </button>
+      <!-- Facebook -->
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Feleitos.store.me" target="_blank" rel="noopener" class="share-btn fb" title="Partilhar no Facebook">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+        </svg>
+        Facebook
+      </a>
+      <!-- WhatsApp -->
+      <a href="https://wa.me/?text=Descobre%20os%20melhores%20produtos%20cinco%20estrelas%20%E2%86%92%20https%3A%2F%2Feleitos.store.me" target="_blank" rel="noopener" class="share-btn wa" title="Partilhar no WhatsApp">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+        </svg>
+        WhatsApp
+      </a>
     </div>
   </section>
 
@@ -1326,6 +1387,20 @@
           // Noutra categoria: esconde o divisor por completo
           divider.style.display = 'none';
         }
+      }
+    }
+    // Instagram share — Web Share API no móvel, copia link no desktop
+    function shareInstagram() {
+      const url  = 'https://eleitos.store.me';
+      const text = 'ELEITOS — A Seleção Cinco Estrelas. Os melhores produtos, sem segunda opção.';
+      if (navigator.share) {
+        navigator.share({ title: 'ELEITOS', text, url }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(url).then(() => {
+          const lbl = document.getElementById('ig-label');
+          lbl.textContent = 'Link copiado!';
+          setTimeout(() => lbl.textContent = 'Instagram', 2200);
+        });
       }
     }
   </script>
