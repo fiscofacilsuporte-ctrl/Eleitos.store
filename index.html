@@ -20,9 +20,9 @@
       --border:  #28263a;
       --gold:    #c6a97a;
       --text-1:  #f0ece6;
-      --text-2:  #9898a8;
-      --text-3:  #565668;
-      --text-4:  #343444;
+      --text-2:  #b8b8c8;
+      --text-3:  #78788c;
+      --text-4:  #585870;
     }
 
     body {
@@ -116,14 +116,22 @@
       border-color: rgba(198,169,122,0.35); color: var(--gold); background: rgba(198,169,122,0.04);
     }
     .estreias-pill {
-      border-color: rgba(198,169,122,0.22);
-      color: var(--gold);
-      background: rgba(198,169,122,0.05);
-      font-weight: 400;
+      border-color: #28283a;
+      color: var(--text-3);
+      background: transparent;
+      font-weight: 300;
     }
     .estreias-pill.active, .estreias-pill:hover {
-      border-color: rgba(198,169,122,0.6);
-      background: rgba(198,169,122,0.1);
+      border-color: rgba(198,169,122,0.35); color: var(--gold); background: rgba(198,169,122,0.04);
+    }
+    .estreias-star {
+      display: inline-block;
+      color: var(--gold);
+      animation: starBlink 2.8s ease-in-out infinite;
+    }
+    @keyframes starBlink {
+      0%, 100% { opacity: 0.9; }
+      50%       { opacity: 0.15; }
     }
 
     /* ── Estreias divider inside grid ── */
@@ -254,8 +262,8 @@
     .load-more-btn:hover { border-color: rgba(198,169,122,0.3); color: var(--gold); }
 
     .manifesto { padding: 4rem 1.5rem; text-align: center; border-top: 1px solid #1e1e2c; border-bottom: 1px solid #1e1e2c; }
-    .manifesto-q { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(1.1rem,3vw,1.6rem); color: #2e2e3e; letter-spacing: 0.03em; line-height: 1.8; }
-    .manifesto-byline { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 1.5rem; font-size: 0.52rem; font-weight: 300; letter-spacing: 0.22em; color: #28283a; text-transform: uppercase; }
+    .manifesto-q { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(1.1rem,3vw,1.6rem); color: #4a4a62; letter-spacing: 0.03em; line-height: 1.8; }
+    .manifesto-byline { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 1.5rem; font-size: 0.52rem; font-weight: 300; letter-spacing: 0.22em; color: #3e3e54; text-transform: uppercase; }
 
     .site-footer { padding: 2.5rem 1.5rem; text-align: center; }
     .footer-line { font-size: 0.56rem; font-weight: 300; letter-spacing: 0.13em; color: var(--text-4); line-height: 2; }
@@ -325,7 +333,7 @@
     <div class="nav-inner">
       <button class="f-pill active" onclick="filter(this,'todos')">Todos</button>
       <span class="nav-sep">✦</span>
-      <button class="f-pill estreias-pill" onclick="filter(this,'estreias')">✦ Estreias</button>
+      <button class="f-pill estreias-pill" onclick="filter(this,'estreias')"><span class="estreias-star">✦</span> Estreias</button>
       <span class="nav-sep">✦</span>
       <button class="f-pill" onclick="filter(this,'audio')">Áudio</button>
       <span class="nav-sep">✦</span>
