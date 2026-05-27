@@ -115,6 +115,31 @@
     .f-pill:hover, .f-pill.active {
       border-color: rgba(198,169,122,0.35); color: var(--gold); background: rgba(198,169,122,0.04);
     }
+    .estreias-pill {
+      border-color: rgba(198,169,122,0.22);
+      color: var(--gold);
+      background: rgba(198,169,122,0.05);
+      font-weight: 400;
+    }
+    .estreias-pill.active, .estreias-pill:hover {
+      border-color: rgba(198,169,122,0.6);
+      background: rgba(198,169,122,0.1);
+    }
+
+    /* ── Estreias divider inside grid ── */
+    .estreias-divider {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 1rem;
+      padding: 2.5rem 0 1.5rem;
+      border-top: 1px solid #20202e;
+      margin-top: 0.5rem;
+    }
+    .estreias-divider .section-label {
+      white-space: nowrap;
+      color: var(--gold);
+      opacity: 0.8;
+      letter-spacing: 0.35em;
+    }
 
     /* ── MAIN ── */
     .main-wrap { max-width: 1440px; margin: 0 auto; padding: 3.5rem 1rem 6rem; }
@@ -269,6 +294,8 @@
   <nav class="site-nav">
     <div class="nav-inner">
       <button class="f-pill active" onclick="filter(this,'todos')">Todos</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill estreias-pill" onclick="filter(this,'estreias')">✦ Estreias</button>
       <span class="nav-sep">✦</span>
       <button class="f-pill" onclick="filter(this,'audio')">Áudio</button>
       <span class="nav-sep">✦</span>
@@ -959,7 +986,286 @@
         </div>
       </article>
 
-    </div><!-- /grid -->
+      <!-- ══════════ ESTREIAS ══════════ -->
+
+      <!-- Divisor visual Estreias -->
+      <div class="estreias-divider">
+        <hr class="section-line" />
+        <span class="section-label">✦ Estreias — Novidades Cinco Estrelas</span>
+        <hr class="section-line" />
+      </div>
+
+      <!-- 1. Apple iPhone 17 Pro Max -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.04s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/81SigpJN1KL._AC_SL1500_.jpg"
+               alt="Apple iPhone 17 Pro Max" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/81fxjeu8pdL._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · Smartphones</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +450 avaliações</span>
+          </div>
+          <h2 class="card-title">Apple iPhone 17 Pro Max</h2>
+          <p class="card-verdict">Chip A19 Pro, câmara periscópica de 5× refinada e o maior ecrã Pro da história da Apple. A definição de topo de gama — actualizada para 2025.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €1.499</span>
+            <span class="card-badge">apple.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Apple+iPhone+17+Pro+Max" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 2. Samsung Galaxy S26 Ultra -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.08s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71fX9aJAZrL._AC_SL1500_.jpg"
+               alt="Samsung Galaxy S26 Ultra" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71fX9aJAZrL._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · Smartphones</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +600 avaliações</span>
+          </div>
+          <h2 class="card-title">Samsung Galaxy S26 Ultra</h2>
+          <p class="card-verdict">Snapdragon de nova geração, câmara de 200MP e S Pen integrada com IA generativa avançada. O Android mais completo do ano — sem margem para dúvidas.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €1.450</span>
+            <span class="card-badge">samsung.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Samsung+Galaxy+S26+Ultra" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 3. Sony WH-1000XM6 -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.12s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/61f1YDpoBXL._AC_SL1500_.jpg"
+               alt="Sony WH-1000XM6" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/61f1YDpoBXL._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · Áudio</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +350 avaliações</span>
+          </div>
+          <h2 class="card-title">Sony WH-1000XM6</h2>
+          <p class="card-verdict">A sexta geração do padrão absoluto. Processador QN3 de nova arquitectura, ANC ainda mais preciso e dobragem plana redesenhada. O silêncio, melhorado.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €399</span>
+            <span class="card-badge">sony.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Sony+WH-1000XM6" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 4. Apple Watch Ultra 3 -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.16s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71ThJMFGpVL._AC_SL1500_.jpg"
+               alt="Apple Watch Ultra 3" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71ThJMFGpVL._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · Wearables</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +280 avaliações</span>
+          </div>
+          <h2 class="card-title">Apple Watch Ultra 3</h2>
+          <p class="card-verdict">Titânio aeroespacial, GPS dupla frequência e autonomia de 72 horas. Para quem leva a sério o que calça no pulso — e não aceita compromissos em altitude.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €899</span>
+            <span class="card-badge">apple.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Apple+Watch+Ultra+3" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 5. DJI Osmo Pocket 4 -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.20s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71sB3pFp7QL._AC_SL1500_.jpg"
+               alt="DJI Osmo Pocket 4" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71sB3pFp7QL._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · Foto/Vídeo</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.8 &nbsp;·&nbsp; +520 avaliações</span>
+          </div>
+          <h2 class="card-title">DJI Osmo Pocket 4</h2>
+          <p class="card-verdict">Sensor de 1" com abertura f/1.8, estabilização de 3 eixos e vídeo 4K/120fps num corpo que cabe no bolso. A câmara de criador mais séria que alguma vez foi portátil.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €549</span>
+            <span class="card-badge">dji.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=DJI+Osmo+Pocket+4" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 6. Bose QuietComfort Ultra Earbuds II -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.24s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/51IQyMRlAqL._AC_SL1500_.jpg"
+               alt="Bose QuietComfort Ultra Earbuds II" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/51IQyMRlAqL._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · Áudio</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.5 &nbsp;·&nbsp; +410 avaliações</span>
+          </div>
+          <h2 class="card-title">Bose QC Ultra Earbuds II</h2>
+          <p class="card-verdict">ANC de nova geração, som espacial imersivo e ajuste personalizado por ouvido. Os earbuds que transformam qualquer sítio no melhor lugar para ouvir música.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €299</span>
+            <span class="card-badge">bose.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Bose+QuietComfort+Ultra+Earbuds+II" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 7. Logitech MX Mechanical Mini V2 -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.28s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/61ni3t1ryQL._AC_SL1500_.jpg"
+               alt="Logitech MX Mechanical Mini V2" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/61ni3t1ryQL._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · Setup</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +190 avaliações</span>
+          </div>
+          <h2 class="card-title">Logitech MX Mechanical Mini V2</h2>
+          <p class="card-verdict">Switches mecânicos silenciosos, retroiluminação adaptativa e conexão multi-dispositivo. O teclado que convence quem nunca quis um teclado mecânico — e não volta atrás.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €159</span>
+            <span class="card-badge">logitech.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Logitech+MX+Mechanical+Mini" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 8. LG UltraGear OLED 32" 2026 -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.32s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/81OU5PGm+qL._AC_SL1500_.jpg"
+               alt="LG UltraGear OLED 32" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/81OU5PGm+qL._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · Setup</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +150 avaliações</span>
+          </div>
+          <h2 class="card-title">LG UltraGear OLED 32" (2026)</h2>
+          <p class="card-verdict">Painel OLED de 32", 240Hz, 0.03ms e cobertura DCI-P3 de 99%. O monitor que faz esquecer todos os anteriores — para trabalho, para jogo, para tudo.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €999</span>
+            <span class="card-badge">lg.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=LG+UltraGear+OLED+32" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 9. Anker Nebula Capsule 3 Laser -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.36s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71bcFpDBv0L._AC_SL1500_.jpg"
+               alt="Anker Nebula Capsule 3 Laser" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/71bcFpDBv0L._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · TVs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.5 &nbsp;·&nbsp; +310 avaliações</span>
+          </div>
+          <h2 class="card-title">Anker Nebula Capsule 3 Laser</h2>
+          <p class="card-verdict">Laser 1080p, Android TV integrado e autonomia de 2,5 horas num cilindro do tamanho de uma lata. O projetor que transforma qualquer parede numa sala de cinema.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €799</span>
+            <span class="card-badge">seenebula.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Anker+Nebula+Capsule+3+Laser" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 10. Shargeek 140W GaN -->
+      <article class="p-card fade-up" data-cat="estreias" style="transition-delay:.40s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/61eXMy-WHRL._AC_SL1500_.jpg"
+               alt="Shargeek 140W GaN" loading="lazy"
+               onerror="this.src='https://m.media-amazon.com/images/I/61eXMy-WHRL._AC_SL1500_.jpg'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Estreia · Smartphones</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +220 avaliações</span>
+          </div>
+          <h2 class="card-title">Shargeek 140W GaN</h2>
+          <p class="card-verdict">4 portas (3× USB-C + 1× USB-A), 140W totais e tecnologia GaN de última geração num bloco compacto. O único carregador que substitui todos os outros — de uma vez.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €79</span>
+            <span class="card-badge">shargeek.com</span>
+          </div>
+          <a href="https://www.amazon.com.br/s?k=Shargeek+140W+GaN" class="cta-btn">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+    </div><!-- /grid (Estreias) -->
 
     <div style="text-align:center;margin-top:4rem;">
       <hr class="hl" style="margin-bottom:2.5rem;" />
