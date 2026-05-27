@@ -353,9 +353,9 @@
 
   <nav class="site-nav">
     <div class="nav-inner">
-      <button class="f-pill active" onclick="filter(this,'todos')">Todos</button>
+      <button class="f-pill" onclick="filter(this,'todos')">Todos</button>
       <span class="nav-sep">✦</span>
-      <button class="f-pill estreias-pill" onclick="filter(this,'estreias')"><span class="estreias-star">✦</span> Estreias</button>
+      <button class="f-pill estreias-pill active" onclick="filter(this,'estreias')"><span class="estreias-star">✦</span> Estreias</button>
       <span class="nav-sep">✦</span>
       <button class="f-pill" onclick="filter(this,'audio')">Áudio</button>
       <span class="nav-sep">✦</span>
@@ -1484,19 +1484,21 @@
       const allCards = Array.from(document.querySelectorAll('#grid .p-card'));
       // Observar scroll reveal em todos
       allCards.forEach(el => io.observe(el));
-      // Esconder do card 16 em diante
-      allCards.forEach((card, i) => {
-        if (i >= TODOS_INITIAL) {
-          card.dataset.todosHidden = 'true';
-          card.style.display       = 'none';
-        } else {
-          card.dataset.todosHidden = 'false';
-        }
-      });
-      // Garantir que o load-more-wrap é visível e o botão também
-      const loadMoreWrap = document.getElementById('load-more-wrap');
-      if (loadMoreWrap && allCards.length > TODOS_INITIAL) {
-        loadMoreWrap.style.display = '';
+      
+      // Inicializar com o filtro 'estreias'
+      const estreiasBtn = document.querySelector('.estreias-pill');
+      if (estreiasBtn) {
+        filter(estreiasBtn, 'estreias');
+      } else {
+        // Fallback caso o botão não seja encontrado (segurança)
+        allCards.forEach((card, i) => {
+          if (i >= TODOS_INITIAL) {
+            card.dataset.todosHidden = 'true';
+            card.style.display       = 'none';
+          } else {
+            card.dataset.todosHidden = 'false';
+          }
+        });
       }
     })();
 
