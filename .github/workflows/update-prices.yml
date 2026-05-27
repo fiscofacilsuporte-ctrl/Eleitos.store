@@ -2,33 +2,27 @@ name: Update Product Prices
 
 on:
   schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
-
-permissions:
-  contents: write
+    - cron: '0 6 * * *' # Corre todos os dias às 06:00
+  workflow_dispatch: # Permite correr manualmente
 
 jobs:
-  update:
+  update-prices:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - run: pip install requests beautifulsoup4
-
-      - run: python scripts/update_prices.py
-
-      - run: python scripts/fix_image_urls.py
-
-      - run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          git add products.json
-          git commit -m "Update prices and fix image URLs [skip ci]" || exit 0
-          git push
+          python-version: '3.x'
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+      - name: Run update
+        run: python scripts/auto_update_prices.py
+      - name: Commit and push
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --quiet || (git commit -m "Auto-update prices" && git push)
+          
