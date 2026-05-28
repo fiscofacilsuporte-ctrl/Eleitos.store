@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """
-ELEITOS — Auto Update Prices via kuantokusta.pt
+ELEITOS — Auto Update Prices via SerpAPI (Google Shopping)
 Corre via GitHub Actions: scripts/auto_update_prices.py
-Pesquisa o preço mais baixo em kuantokusta.pt pelo nome do produto
-e atualiza os preços em index.html.
 """
 
 import re
@@ -14,17 +12,18 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-from urllib.parse import quote_plus
 
-# ── Ficheiro HTML (relativo à raiz do repo) ────────────────────────────────────
-HTML_FILE = os.path.join(os.path.dirname(__file__), '..', 'index.html')
+# ── Configuração ───────────────────────────────────────────────────────────────
+HTML_FILE   = os.path.join(os.path.dirname(__file__), '..', 'index.html')
+SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "")
+SERPAPI_URL = "https://serpapi.com/search.json"
 
-# ── Produtos: title = card-title no HTML | search = query de pesquisa ──────────
+# ── Produtos ───────────────────────────────────────────────────────────────────
 PRODUCTS = [
     {"title": "Sony WH-1000XM5",                 "search": "Sony WH-1000XM5"},
     {"title": "Bose QuietComfort Ultra",          "search": "Bose QuietComfort Ultra Headphones"},
-    {"title": "Samsung Neo QLED QN90D 55",        "search": "Samsung QN90D 55"},
-    {"title": "LG C4 OLED 55",                    "search": "LG C4 OLED 55"},
+    {"title": "Samsung Neo QLED QN90D 55",        "search": "Samsung Neo QLED QN90D 55"},
+    {"title": "LG C4 OLED 55",                    "search": "LG C4 OLED 55 polegadas"},
     {"title": "Apple iPhone 17 Pro Max",          "search": "Apple iPhone 17 Pro Max"},
     {"title": "Samsung Galaxy S26 Ultra",         "search": "Samsung Galaxy S26 Ultra"},
     {"title": "Sony WH-1000XM6",                  "search": "Sony WH-1000XM6"},
@@ -34,8 +33,8 @@ PRODUCTS = [
     {"title": "Logitech MX Mechanical Mini V2",   "search": "Logitech MX Mechanical Mini V2"},
     {"title": "LG UltraGear OLED 32",             "search": "LG UltraGear OLED 32 2024"},
     {"title": "Anker Nebula Capsule 3 Laser",     "search": "Anker Nebula Capsule 3 Laser"},
-    {"title": "Shargeek 140W GaN",               "search": "Shargeek 140W GaN"},
-    {"title": "Sony Bravia XR A95L",             "search": "Sony Bravia A95L"},
+    {"title": "Shargeek 140W GaN",               "search": "Shargeek 140W GaN charger"},
+    {"title": "Sony Bravia XR A95L",             "search": "Sony Bravia XR A95L QD-OLED"},
     {"title": "Apple iPhone 16 Pro Max",          "search": "Apple iPhone 16 Pro Max"},
     {"title": "Samsung Galaxy S25 Ultra",         "search": "Samsung Galaxy S25 Ultra"},
     {"title": "Google Pixel 9 Pro",              "search": "Google Pixel 9 Pro"},
@@ -44,42 +43,81 @@ PRODUCTS = [
     {"title": "Amazon Echo Show",                "search": "Amazon Echo Show 10"},
     {"title": "Philips Hue Gradient Lightstrip", "search": "Philips Hue Gradient Lightstrip"},
     {"title": "Apple Watch Ultra 2",             "search": "Apple Watch Ultra 2"},
-    {"title": "Garmin",                          "search": "Garmin Fenix 7X Pro"},
-    {"title": "Arc'teryx Beta AR Jacket",        "search": "Arcteryx Beta AR"},
-    {"title": "Patagonia Nano Puff",             "search": "Patagonia Nano Puff"},
-    {"title": "Levi's 501 Original Fit",         "search": "Levis 501 Original"},
+    {"title": "Garmin",                          "search": "Garmin Fenix 7X Pro Solar"},
+    {"title": "Arc'teryx Beta AR Jacket",        "search": "Arcteryx Beta AR Jacket"},
+    {"title": "Patagonia Nano Puff",             "search": "Patagonia Nano Puff Jacket"},
+    {"title": "Levi's 501 Original Fit",         "search": "Levis 501 Original Fit jeans"},
     {"title": "New Balance 990v6",               "search": "New Balance 990v6"},
     {"title": "Adidas Samba OG",                 "search": "Adidas Samba OG"},
     {"title": "Salomon XT-6",                    "search": "Salomon XT-6"},
-    {"title": "Geox J Perth Boy A",              "search": "Geox Perth Boy"},
-    {"title": "LIONELO MIKA PLUS",               "search": "Lionelo Mika Plus"},
+    {"title": "Geox J Perth Boy A",              "search": "Geox Perth Boy sneakers"},
+    {"title": "LIONELO MIKA PLUS",               "search": "Lionelo Mika Plus stroller"},
 ]
 
-BASE_URL   = "https://www.kuantokusta.pt/search?search_query={query}&sort_by=preco_asc"
-IDEALO_URL = "https://www.idealo.pt/pesquisa/{query}"
-
-USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-]
-
-def get_headers(referer="https://www.kuantokusta.pt/"):
-    return {
-        "User-Agent": random.choice(USER_AGENTS),
-        "Accept-Language": "pt-PT,pt;q=0.9,en;q=0.7",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
-        "Referer": referer,
+# ── Vai buscar preço via SerpAPI Google Shopping ───────────────────────────────
+def obter_preco(search_query):
+    params = {
+        "engine":   "google_shopping",
+        "q":        search_query,
+        "api_key":  SERPAPI_KEY,
+        "gl":       "pt",        # Portugal
+        "hl":       "pt",        # Português
+        "currency": "EUR",
     }
 
+    try:
+        r = requests.get(SERPAPI_URL, params=params, timeout=30)
+        data = r.json()
+
+        if "error" in data:
+            print(f"    ✗ SerpAPI erro: {data['error']}")
+            return None
+
+        resultados = data.get("shopping_results", [])
+        if not resultados:
+            print(f"    ⚠ Sem resultados Google Shopping")
+            return None
+
+        # Recolher todos os preços válidos
+        precos = []
+        for item in resultados[:10]:  # Top 10 resultados
+            preco_raw = item.get("price", "")
+            if not preco_raw:
+                continue
+            valor = converter_preco(preco_raw)
+            if valor and 1 < valor < 50000:
+                precos.append(valor)
+
+        if not precos:
+            print(f"    ⚠ Nenhum preço válido nos resultados")
+            return None
+
+        # Usar a mediana dos 3 preços mais baixos (evita outliers)
+        precos.sort()
+        amostra = precos[:3]
+        mediana = sorted(amostra)[len(amostra) // 2]
+
+        print(f"    📊 Preços encontrados: {[formatar_preco(p) for p in amostra]}")
+        return formatar_preco(mediana)
+
+    except requests.exceptions.Timeout:
+        print(f"    ✗ Timeout")
+        return None
+    except Exception as e:
+        print(f"    ✗ Erro: {e}")
+        return None
+
+# ── Converte string de preço para float ───────────────────────────────────────
 def converter_preco(raw):
     try:
-        raw = raw.replace('\xa0', '').replace('\u202f', '').replace(' ', '').strip()
+        raw = str(raw).replace('\xa0', '').replace('\u202f', '').replace(' ', '').strip()
+        # Remover símbolo de moeda
+        raw = re.sub(r'[€$£]', '', raw).strip()
         if ',' in raw and '.' in raw:
+            # 1.299,99 → 1299.99
             raw = raw.replace('.', '').replace(',', '.')
         elif ',' in raw:
+            # 349,99 → 349.99
             raw = raw.replace(',', '.')
         return float(raw)
     except (ValueError, AttributeError):
@@ -93,61 +131,7 @@ def formatar_preco(valor_float):
         formatado = str(inteiro)
     return f"≈ €{formatado}"
 
-def extrair_precos_da_pagina(html):
-    soup = BeautifulSoup(html, "html.parser")
-    precos = []
-
-    seletores = [
-        ".kk-product-price", ".product-price", ".preco", ".price",
-        "[class*='price']", "[class*='preco']", "[itemprop='price']",
-        ".best-price", ".lowest-price", ".sr-detailedItem__price",
-        ".offerList-item__priceMin", ".price__top",
-    ]
-
-    for seletor in seletores:
-        for el in soup.select(seletor):
-            texto = el.get_text(strip=True)
-            match = re.search(r'(\d[\d.,\s]*)\s*€|€\s*(\d[\d.,\s]*)', texto)
-            if match:
-                raw = (match.group(1) or match.group(2)).strip()
-                valor = converter_preco(raw)
-                if valor and 1 < valor < 50000:
-                    precos.append(valor)
-
-    return min(precos) if precos else None
-
-def obter_preco(search_query):
-    # — Tentativa 1: kuantokusta.pt
-    url = BASE_URL.format(query=quote_plus(search_query))
-    try:
-        r = requests.get(url, headers=get_headers(), timeout=20)
-        if r.status_code == 200:
-            valor = extrair_precos_da_pagina(r.text)
-            if valor:
-                print(f"    📍 kuantokusta.pt → {formatar_preco(valor)}")
-                return formatar_preco(valor)
-        print(f"    ⚠ kuantokusta: sem resultado (HTTP {r.status_code})")
-    except Exception as e:
-        print(f"    ⚠ kuantokusta: {e}")
-
-    time.sleep(random.uniform(2, 4))
-
-    # — Tentativa 2: idealo.pt
-    print(f"    🔄 A tentar idealo.pt...")
-    url2 = IDEALO_URL.format(query=quote_plus(search_query))
-    try:
-        r2 = requests.get(url2, headers=get_headers("https://www.idealo.pt/"), timeout=20)
-        if r2.status_code == 200:
-            valor = extrair_precos_da_pagina(r2.text)
-            if valor:
-                print(f"    📍 idealo.pt → {formatar_preco(valor)}")
-                return formatar_preco(valor)
-        print(f"    ⚠ idealo: sem resultado (HTTP {r2.status_code})")
-    except Exception as e:
-        print(f"    ⚠ idealo: {e}")
-
-    return None
-
+# ── Atualiza preço no HTML ────────────────────────────────────────────────────
 def atualizar_html(soup, titulo, novo_preco):
     for h2 in soup.find_all("h2", class_="card-title"):
         h2_texto = h2.get_text(strip=True)
@@ -161,10 +145,15 @@ def atualizar_html(soup, titulo, novo_preco):
                     return True, h2_texto, preco_antigo
     return False, titulo, None
 
+# ── Main ──────────────────────────────────────────────────────────────────────
 def main():
+    if not SERPAPI_KEY:
+        print("❌ SERPAPI_KEY não encontrada. Adiciona o secret no GitHub.")
+        sys.exit(1)
+
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M UTC")
     print("=" * 60)
-    print(f"  ELEITOS — Auto Update Prices (kuantokusta.pt)")
+    print(f"  ELEITOS — Auto Update Prices (Google Shopping)")
     print(f"  {timestamp}")
     print("=" * 60)
 
@@ -191,10 +180,9 @@ def main():
         print(f"\n[{i:02d}/{total}] {titulo}")
         print(f"    🔍 '{search}'")
 
+        # Pequena pausa para não exceder rate limit da SerpAPI
         if i > 1:
-            pausa = random.uniform(2.0, 4.0)
-            print(f"    ⏳ {pausa:.1f}s...")
-            time.sleep(pausa)
+            time.sleep(random.uniform(1.0, 2.0))
 
         preco = obter_preco(search)
 
@@ -210,12 +198,13 @@ def main():
                 print(f"    ✅ {preco_antigo} → {preco}")
                 atualizados.append(f"{h2_real}: {preco_antigo} → {preco}")
             else:
-                print(f"    ✓ Igual ({preco})")
+                print(f"    ✓ Sem alteração ({preco})")
                 sem_alteracao.append(titulo)
         else:
             print(f"    ⚠ Título não encontrado no HTML")
             nao_encontrado.append(titulo)
 
+    # Guardar HTML se houve alterações
     if atualizados:
         with open(html_path, "w", encoding="utf-8") as f:
             f.write(str(soup))
@@ -223,6 +212,7 @@ def main():
     else:
         print(f"\n✓ Sem alterações — index.html não modificado")
 
+    # Resumo final
     print("\n" + "=" * 60)
     print(f"  ✅ Atualizados:   {len(atualizados)}")
     print(f"  ✓ Sem alteração: {len(sem_alteracao)}")
