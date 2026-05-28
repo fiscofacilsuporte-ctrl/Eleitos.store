@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-ELEITOS — Auto Update Prices
+ELEITOS — Auto Update Prices via kuantokusta.pt
 Corre via GitHub Actions: scripts/auto_update_prices.py
-Atualiza os preços em index.html com base nos links de afiliado Amazon.
+Pesquisa o preço mais baixo em kuantokusta.pt pelo nome do produto
+e atualiza os preços em index.html.
 """
 
 import re
@@ -13,181 +14,144 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+from urllib.parse import quote_plus
 
 # ── Ficheiro HTML (relativo à raiz do repo) ────────────────────────────────────
 HTML_FILE = os.path.join(os.path.dirname(__file__), '..', 'index.html')
 
-# ── Mapeamento produto → link de afiliado ──────────────────────────────────────
+# ── Produtos: title = card-title no HTML | search = query de pesquisa ──────────
 PRODUCTS = [
-    {"title": "Sony WH-1000XM5",                 "url": "https://amzn.to/4wRY3ZY"},
-    {"title": "Bose QuietComfort Ultra",          "url": "https://amzn.to/4tXG4yG"},
-    {"title": "Samsung Neo QLED QN90D 55",        "url": "https://amzn.to/4dORajG"},
-    {"title": "LG C4 OLED 55",                    "url": "https://amzn.to/3PsmXPk"},
-    {"title": "Apple iPhone 17 Pro Max",          "url": "https://amzn.to/4uzhNA6"},
-    {"title": "Samsung Galaxy S26 Ultra",         "url": "https://amzn.to/4tWJ9iw"},
-    {"title": "Sony WH-1000XM6",                  "url": "https://amzn.to/4vgAKHW"},
-    {"title": "Apple Watch Ultra 3",              "url": "https://amzn.to/4dyUeBt"},
-    {"title": "DJI Osmo Pocket 4",               "url": "https://amzn.to/4fKuAet"},
-    {"title": "Bose QC Ultra Earbuds II",         "url": "https://amzn.to/4nVIGMf"},
-    {"title": "Logitech MX Mechanical Mini V2",   "url": "https://amzn.to/4dxdgbv"},
-    {"title": "LG UltraGear OLED 32",             "url": "https://amzn.to/4e7JaLO"},
-    {"title": "Anker Nebula Capsule 3 Laser",     "url": "https://amzn.to/4uzImoX"},
-    {"title": "Shargeek 140W GaN",               "url": "https://amzn.to/4wT8Ovk"},
-    {"title": "Sony Bravia XR A95L",             "url": "https://amzn.to/4e9g9iM"},
-    {"title": "Apple iPhone 16 Pro Max",          "url": "https://amzn.to/4u2Rvp4"},
-    {"title": "Samsung Galaxy S25 Ultra",         "url": "https://amzn.to/4dvGg3m"},
-    {"title": "Google Pixel 9 Pro",              "url": "https://amzn.to/43jkbPL"},
-    {"title": "Elgato Stream Deck MK.2",         "url": "https://amzn.to/3RO6k14"},
-    {"title": "Logitech MX Master 3S",           "url": "https://amzn.to/43vEmtB"},
-    {"title": "Amazon Echo Show",                "url": "https://amzn.to/4ujlqcN"},
-    {"title": "Philips Hue Gradient Lightstrip", "url": "https://amzn.to/4faKmzd"},
-    {"title": "Apple Watch Ultra 2",             "url": "https://amzn.to/4dIGUL7"},
-    {"title": "Garmin",                          "url": "https://amzn.to/4fI82ej"},
-    {"title": "Arc'teryx Beta AR Jacket",        "url": "https://amzn.to/43jlXAp"},
-    {"title": "Patagonia Nano Puff",             "url": "https://amzn.to/3Q77DHZ"},
-    {"title": "Levi's 501 Original Fit",         "url": "https://amzn.to/43zw0Be"},
-    {"title": "New Balance 990v6",               "url": "https://amzn.to/4uAAV0y"},
-    {"title": "Adidas Samba OG",                 "url": "https://amzn.to/4e84vVo"},
-    {"title": "Salomon XT-6",                    "url": "https://amzn.to/3PGxl67"},
-    {"title": "Geox J Perth Boy A",              "url": "https://amzn.to/3Q3bQwm"},
-    {"title": "LIONELO MIKA PLUS",               "url": "https://amzn.to/3RMeOpt"},
+    {"title": "Sony WH-1000XM5",                 "search": "Sony WH-1000XM5"},
+    {"title": "Bose QuietComfort Ultra",          "search": "Bose QuietComfort Ultra Headphones"},
+    {"title": "Samsung Neo QLED QN90D 55",        "search": "Samsung QN90D 55"},
+    {"title": "LG C4 OLED 55",                    "search": "LG C4 OLED 55"},
+    {"title": "Apple iPhone 17 Pro Max",          "search": "Apple iPhone 17 Pro Max"},
+    {"title": "Samsung Galaxy S26 Ultra",         "search": "Samsung Galaxy S26 Ultra"},
+    {"title": "Sony WH-1000XM6",                  "search": "Sony WH-1000XM6"},
+    {"title": "Apple Watch Ultra 3",              "search": "Apple Watch Ultra 3"},
+    {"title": "DJI Osmo Pocket 4",               "search": "DJI Osmo Pocket 4"},
+    {"title": "Bose QC Ultra Earbuds II",         "search": "Bose QuietComfort Ultra Earbuds"},
+    {"title": "Logitech MX Mechanical Mini V2",   "search": "Logitech MX Mechanical Mini V2"},
+    {"title": "LG UltraGear OLED 32",             "search": "LG UltraGear OLED 32 2024"},
+    {"title": "Anker Nebula Capsule 3 Laser",     "search": "Anker Nebula Capsule 3 Laser"},
+    {"title": "Shargeek 140W GaN",               "search": "Shargeek 140W GaN"},
+    {"title": "Sony Bravia XR A95L",             "search": "Sony Bravia A95L"},
+    {"title": "Apple iPhone 16 Pro Max",          "search": "Apple iPhone 16 Pro Max"},
+    {"title": "Samsung Galaxy S25 Ultra",         "search": "Samsung Galaxy S25 Ultra"},
+    {"title": "Google Pixel 9 Pro",              "search": "Google Pixel 9 Pro"},
+    {"title": "Elgato Stream Deck MK.2",         "search": "Elgato Stream Deck MK2"},
+    {"title": "Logitech MX Master 3S",           "search": "Logitech MX Master 3S"},
+    {"title": "Amazon Echo Show",                "search": "Amazon Echo Show 10"},
+    {"title": "Philips Hue Gradient Lightstrip", "search": "Philips Hue Gradient Lightstrip"},
+    {"title": "Apple Watch Ultra 2",             "search": "Apple Watch Ultra 2"},
+    {"title": "Garmin",                          "search": "Garmin Fenix 7X Pro"},
+    {"title": "Arc'teryx Beta AR Jacket",        "search": "Arcteryx Beta AR"},
+    {"title": "Patagonia Nano Puff",             "search": "Patagonia Nano Puff"},
+    {"title": "Levi's 501 Original Fit",         "search": "Levis 501 Original"},
+    {"title": "New Balance 990v6",               "search": "New Balance 990v6"},
+    {"title": "Adidas Samba OG",                 "search": "Adidas Samba OG"},
+    {"title": "Salomon XT-6",                    "search": "Salomon XT-6"},
+    {"title": "Geox J Perth Boy A",              "search": "Geox Perth Boy"},
+    {"title": "LIONELO MIKA PLUS",               "search": "Lionelo Mika Plus"},
 ]
 
-# ── Headers que imitam um browser real ────────────────────────────────────────
+BASE_URL   = "https://www.kuantokusta.pt/search?search_query={query}&sort_by=preco_asc"
+IDEALO_URL = "https://www.idealo.pt/pesquisa/{query}"
+
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
 ]
 
-def get_headers():
+def get_headers(referer="https://www.kuantokusta.pt/"):
     return {
         "User-Agent": random.choice(USER_AGENTS),
-        "Accept-Language": "pt-PT,pt;q=0.9,es;q=0.8,en;q=0.7",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "pt-PT,pt;q=0.9,en;q=0.7",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
-        "Upgrade-Insecure-Requests": "1",
-        "Cache-Control": "max-age=0",
+        "Referer": referer,
     }
 
-# ── Extrai preço da página Amazon ─────────────────────────────────────────────
-def extrair_preco(html):
-    soup = BeautifulSoup(html, "html.parser")
-
-    seletores = [
-        "#corePrice_feature_div .a-price .a-offscreen",
-        "#apex_offerDisplay_desktop .a-price .a-offscreen",
-        "#corePriceDisplay_desktop_feature_div .a-price .a-offscreen",
-        "#price_inside_buybox",
-        "#priceblock_ourprice",
-        "#priceblock_dealprice",
-        ".a-price.a-text-price.a-size-medium .a-offscreen",
-        ".a-price .a-offscreen",
-        "#tp_price_block_total_price_ww .a-offscreen",
-    ]
-
-    for seletor in seletores:
-        el = soup.select_one(seletor)
-        if el:
-            texto = el.get_text(strip=True)
-            if texto and any(c.isdigit() for c in texto):
-                return texto
-
-    return None
-
-# ── Converte preço Amazon → formato ELEITOS (≈ €1.299) ───────────────────────
-def formatar_preco(preco_raw):
-    # Normalizar espaços e caracteres especiais
-    preco_raw = preco_raw.replace('\xa0', '').replace('\u202f', '').strip()
-
-    # Extrair sequência numérica
-    match = re.search(r'[\d.,]+', preco_raw)
-    if not match:
-        return None
-
-    raw = match.group(0)
-
+def converter_preco(raw):
     try:
+        raw = raw.replace('\xa0', '').replace('\u202f', '').replace(' ', '').strip()
         if ',' in raw and '.' in raw:
-            # Formato europeu: 1.299,99
-            inteiro = int(raw.split(',')[0].replace('.', ''))
+            raw = raw.replace('.', '').replace(',', '.')
         elif ',' in raw:
-            # Só vírgula: 349,99
-            inteiro = int(raw.split(',')[0])
-        elif '.' in raw:
-            partes = raw.split('.')
-            if len(partes[-1]) == 2 and len(partes) == 2:
-                # Decimal inglês: 299.99
-                inteiro = int(partes[0])
-            else:
-                # Separador de milhares: 1.299
-                inteiro = int(raw.replace('.', ''))
-        else:
-            inteiro = int(raw)
-    except ValueError:
+            raw = raw.replace(',', '.')
+        return float(raw)
+    except (ValueError, AttributeError):
         return None
 
-    # Formatar com ponto como separador de milhares (PT)
+def formatar_preco(valor_float):
+    inteiro = round(valor_float)
     if inteiro >= 1000:
         formatado = f"{inteiro:,}".replace(",", ".")
     else:
         formatado = str(inteiro)
-
     return f"≈ €{formatado}"
 
-# ── Vai buscar preço com retry ────────────────────────────────────────────────
-def obter_preco(url, tentativas=3):
-    for tentativa in range(1, tentativas + 1):
-        try:
-            session = requests.Session()
-            r = session.get(
-                url,
-                headers=get_headers(),
-                timeout=20,
-                allow_redirects=True
-            )
+def extrair_precos_da_pagina(html):
+    soup = BeautifulSoup(html, "html.parser")
+    precos = []
 
-            if r.status_code == 503:
-                print(f"    ⚠ Bloqueado (503) — tentativa {tentativa}/{tentativas}")
-                time.sleep(random.uniform(10, 20))
-                continue
+    seletores = [
+        ".kk-product-price", ".product-price", ".preco", ".price",
+        "[class*='price']", "[class*='preco']", "[itemprop='price']",
+        ".best-price", ".lowest-price", ".sr-detailedItem__price",
+        ".offerList-item__priceMin", ".price__top",
+    ]
 
-            if r.status_code != 200:
-                print(f"    ⚠ HTTP {r.status_code}")
-                return None
+    for seletor in seletores:
+        for el in soup.select(seletor):
+            texto = el.get_text(strip=True)
+            match = re.search(r'(\d[\d.,\s]*)\s*€|€\s*(\d[\d.,\s]*)', texto)
+            if match:
+                raw = (match.group(1) or match.group(2)).strip()
+                valor = converter_preco(raw)
+                if valor and 1 < valor < 50000:
+                    precos.append(valor)
 
-            preco_raw = extrair_preco(r.text)
-            if not preco_raw:
-                print(f"    ⚠ Preço não encontrado (tentativa {tentativa}/{tentativas})")
-                if tentativa < tentativas:
-                    time.sleep(random.uniform(5, 10))
-                continue
+    return min(precos) if precos else None
 
-            return formatar_preco(preco_raw)
+def obter_preco(search_query):
+    # — Tentativa 1: kuantokusta.pt
+    url = BASE_URL.format(query=quote_plus(search_query))
+    try:
+        r = requests.get(url, headers=get_headers(), timeout=20)
+        if r.status_code == 200:
+            valor = extrair_precos_da_pagina(r.text)
+            if valor:
+                print(f"    📍 kuantokusta.pt → {formatar_preco(valor)}")
+                return formatar_preco(valor)
+        print(f"    ⚠ kuantokusta: sem resultado (HTTP {r.status_code})")
+    except Exception as e:
+        print(f"    ⚠ kuantokusta: {e}")
 
-        except requests.exceptions.Timeout:
-            print(f"    ⚠ Timeout (tentativa {tentativa}/{tentativas})")
-        except Exception as e:
-            print(f"    ⚠ Erro: {e}")
+    time.sleep(random.uniform(2, 4))
 
-        if tentativa < tentativas:
-            time.sleep(random.uniform(5, 10))
+    # — Tentativa 2: idealo.pt
+    print(f"    🔄 A tentar idealo.pt...")
+    url2 = IDEALO_URL.format(query=quote_plus(search_query))
+    try:
+        r2 = requests.get(url2, headers=get_headers("https://www.idealo.pt/"), timeout=20)
+        if r2.status_code == 200:
+            valor = extrair_precos_da_pagina(r2.text)
+            if valor:
+                print(f"    📍 idealo.pt → {formatar_preco(valor)}")
+                return formatar_preco(valor)
+        print(f"    ⚠ idealo: sem resultado (HTTP {r2.status_code})")
+    except Exception as e:
+        print(f"    ⚠ idealo: {e}")
 
     return None
 
-# ── Atualiza preço no HTML por título de card ─────────────────────────────────
 def atualizar_html(soup, titulo, novo_preco):
-    """
-    Localiza o card pelo h2.card-title (match parcial) e
-    atualiza o span.card-price dentro do mesmo card-body.
-    """
     for h2 in soup.find_all("h2", class_="card-title"):
         h2_texto = h2.get_text(strip=True)
-        # Match parcial bidirecional (cobre aspas, acentos, etc.)
-        titulo_lower  = titulo.lower()
-        h2_lower      = h2_texto.lower()
-        if titulo_lower in h2_lower or h2_lower in titulo_lower:
+        if titulo.lower() in h2_texto.lower() or h2_texto.lower() in titulo.lower():
             card_body = h2.find_parent("div", class_="card-body")
             if card_body:
                 span = card_body.find("span", class_="card-price")
@@ -195,53 +159,49 @@ def atualizar_html(soup, titulo, novo_preco):
                     preco_antigo = span.get_text(strip=True)
                     span.string  = novo_preco
                     return True, h2_texto, preco_antigo
-
     return False, titulo, None
 
-# ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M UTC")
     print("=" * 60)
-    print(f"  ELEITOS — Auto Update Prices")
+    print(f"  ELEITOS — Auto Update Prices (kuantokusta.pt)")
     print(f"  {timestamp}")
     print("=" * 60)
 
-    # Ler HTML
     html_path = os.path.abspath(HTML_FILE)
     if not os.path.exists(html_path):
         print(f"❌ Ficheiro não encontrado: {html_path}")
         sys.exit(1)
 
     with open(html_path, "r", encoding="utf-8") as f:
-        conteudo_original = f.read()
+        conteudo = f.read()
 
-    soup = BeautifulSoup(conteudo_original, "html.parser")
+    soup = BeautifulSoup(conteudo, "html.parser")
 
     atualizados    = []
     sem_preco      = []
+    sem_alteracao  = []
     nao_encontrado = []
     total = len(PRODUCTS)
 
     for i, produto in enumerate(PRODUCTS, 1):
         titulo = produto["title"]
-        url    = produto["url"]
+        search = produto["search"]
 
         print(f"\n[{i:02d}/{total}] {titulo}")
+        print(f"    🔍 '{search}'")
 
-        # Pausa aleatória entre pedidos (evita bloqueio)
         if i > 1:
-            pausa = random.uniform(4.0, 9.0)
+            pausa = random.uniform(2.0, 4.0)
             print(f"    ⏳ {pausa:.1f}s...")
             time.sleep(pausa)
 
-        preco = obter_preco(url)
+        preco = obter_preco(search)
 
         if preco is None:
             print(f"    ✗ Sem preço — mantido o atual")
             sem_preco.append(titulo)
             continue
-
-        print(f"    💰 {preco}")
 
         ok, h2_real, preco_antigo = atualizar_html(soup, titulo, preco)
 
@@ -250,31 +210,29 @@ def main():
                 print(f"    ✅ {preco_antigo} → {preco}")
                 atualizados.append(f"{h2_real}: {preco_antigo} → {preco}")
             else:
-                print(f"    ✓ Sem alteração ({preco})")
+                print(f"    ✓ Igual ({preco})")
+                sem_alteracao.append(titulo)
         else:
             print(f"    ⚠ Título não encontrado no HTML")
             nao_encontrado.append(titulo)
 
-    # Guardar HTML apenas se houve alterações
-    conteudo_novo = str(soup)
     if atualizados:
         with open(html_path, "w", encoding="utf-8") as f:
-            f.write(conteudo_novo)
+            f.write(str(soup))
         print(f"\n✅ index.html guardado com {len(atualizados)} atualização(ões)")
     else:
-        print(f"\n✓ Sem alterações — index.html não foi modificado")
+        print(f"\n✓ Sem alterações — index.html não modificado")
 
-    # Resumo final
     print("\n" + "=" * 60)
-    print(f"  ✅ Atualizados:     {len(atualizados)}")
-    print(f"  ✓ Sem alteração:   {total - len(atualizados) - len(sem_preco) - len(nao_encontrado)}")
-    print(f"  ⚠ Sem preço:       {len(sem_preco)}")
-    print(f"  ✗ Não no HTML:     {len(nao_encontrado)}")
+    print(f"  ✅ Atualizados:   {len(atualizados)}")
+    print(f"  ✓ Sem alteração: {len(sem_alteracao)}")
+    print(f"  ⚠ Sem preço:     {len(sem_preco)}")
+    print(f"  ✗ Não no HTML:   {len(nao_encontrado)}")
 
     if atualizados:
-        print("\n  Preços alterados:")
-        for linha in atualizados:
-            print(f"    · {linha}")
+        print("\n  Alterações:")
+        for l in atualizados:
+            print(f"    · {l}")
 
     if sem_preco:
         print("\n  Verificar manualmente:")
