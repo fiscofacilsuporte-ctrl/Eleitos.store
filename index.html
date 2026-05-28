@@ -331,6 +331,90 @@
 
     /* Imagem com fallback de cor */
     .card-media img { background-color: #141218; }
+
+    /* ── Vantagens de Elite Dropdown ── */
+    .elite-container {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+      position: relative;
+    }
+    .elite-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #1c1a1e 0%, #141218 100%);
+      color: var(--gold);
+      border: 1px solid rgba(198,169,122,0.3);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .elite-btn:hover {
+      border-color: var(--gold);
+      box-shadow: 0 6px 20px rgba(198,169,122,0.15);
+      transform: translateY(-2px);
+    }
+    .elite-btn svg {
+      width: 12px;
+      height: 12px;
+      transition: transform 0.4s ease;
+    }
+    .elite-btn.active svg {
+      transform: rotate(180deg);
+    }
+    .elite-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      width: 280px;
+      background: #1c1a1e;
+      border: 1px solid #28263a;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      padding: 10px 0;
+    }
+    .elite-dropdown.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+    .elite-link {
+      display: block;
+      padding: 12px 20px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.1em;
+      color: var(--text-2);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .elite-link:last-child { border-bottom: none; }
+    .elite-link:hover {
+      background: rgba(198,169,122,0.08);
+      color: var(--gold);
+      padding-left: 25px;
+    }
+    .elite-link span {
+      display: block;
+      font-size: 0.5rem;
+      color: var(--text-4);
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
   </style>
 </head>
 <body>
@@ -378,6 +462,31 @@
       <button class="f-pill" onclick="filter(this,'bebes')">Bebés</button>
     </div>
   </nav>
+
+  <div class="elite-container">
+    <button class="elite-btn" id="eliteBtn">
+      Vantagens de Elite
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="elite-dropdown" id="eliteDropdown">
+      <a href="https://amzn.to/example1" class="elite-link" rel="sponsored noopener" target="_blank">
+        Cupões de Desconto Amazon
+        <span>Ofertas atualizadas diariamente</span>
+      </a>
+      <a href="https://amzn.to/example2" class="elite-link" rel="sponsored noopener" target="_blank">
+        Ofertas Flash do Dia
+        <span>Até 70% de desconto imediato</span>
+      </a>
+      <a href="https://amzn.to/example3" class="elite-link" rel="sponsored noopener" target="_blank">
+        Amazon Outlet
+        <span>Produtos de marca a preços reduzidos</span>
+      </a>
+      <a href="https://amzn.to/example4" class="elite-link" rel="sponsored noopener" target="_blank">
+        Prova Primeiro, Paga Depois
+        <span>Exclusivo Moda Amazon Prime</span>
+      </a>
+    </div>
+  </div>
 
   <main class="main-wrap">
     <div class="section-header">
@@ -1507,6 +1616,26 @@
         if (lmw) lmw.style.display = '';
       }
     })();
+
+    // ── Vantagens de Elite Dropdown ─────────────────────────────────────────────
+    const eliteBtn = document.getElementById('eliteBtn');
+    const eliteDropdown = document.getElementById('eliteDropdown');
+
+    if (eliteBtn && eliteDropdown) {
+      eliteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        eliteBtn.classList.toggle('active');
+        eliteDropdown.classList.toggle('show');
+      });
+
+      // Fechar ao clicar fora
+      document.addEventListener('click', (e) => {
+        if (!eliteBtn.contains(e.target) && !eliteDropdown.contains(e.target)) {
+          eliteBtn.classList.remove('active');
+          eliteDropdown.classList.remove('show');
+        }
+      });
+    }
 
     // ── Instagram share ────────────────────────────────────────────────────────
     function shareInstagram() {
