@@ -26,33 +26,7 @@
   <meta name="twitter:description" content="Curadoria independente dos melhores produtos Amazon. Só o melhor entra." />
   <meta name="twitter:image"       content="https://eleitos.me/og-image.jpg" />
 
-  <script src="https://cdn.tailwindcss.com">
-    // ── Modais Legais ──────────────────────────────────────────────────────────
-    function abrirModal(id) {
-      const m = document.getElementById(id);
-      if (m) {
-        m.classList.add('open');
-        document.body.style.overflow = 'hidden';
-        // Scroll para o topo do modal
-        const inner = m.querySelector('.legal-modal');
-        if (inner) inner.scrollTop = 0;
-      }
-    }
-    function fecharModal(id) {
-      const m = document.getElementById(id);
-      if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
-    }
-    function fecharModalFora(e, id) {
-      if (e.target.id === id) fecharModal(id);
-    }
-    // Fechar com tecla Escape
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        document.querySelectorAll('.legal-modal-overlay.open')
-          .forEach(m => { m.classList.remove('open'); document.body.style.overflow = ''; });
-      }
-    });
-  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,200;0,300;0,400;1,300&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet" />
@@ -1801,6 +1775,30 @@
         });
       }
     }
+  
+    // ── Modais Legais ─────────────────────────────────────────────────────────
+    function abrirModal(id) {
+      const m = document.getElementById(id);
+      if (m) {
+        m.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        const inner = m.querySelector('.legal-modal');
+        if (inner) inner.scrollTop = 0;
+      }
+    }
+    function fecharModal(id) {
+      const m = document.getElementById(id);
+      if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
+    }
+    function fecharModalFora(e, id) {
+      if (e.target.id === id) fecharModal(id);
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.legal-modal-overlay.open')
+          .forEach(m => { m.classList.remove('open'); document.body.style.overflow = ''; });
+      }
+    });
   </script>
 </body>
 </html>
