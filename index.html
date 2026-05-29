@@ -219,6 +219,55 @@
       50%       { opacity: 0.15; }
     }
 
+    /* ── Eleitíssimos pill ── */
+    .eleitissimos-pill {
+      border-color: rgba(198,169,122,0.25);
+      color: var(--text-3);
+      background: transparent;
+      font-weight: 300;
+    }
+    .eleitissimos-pill.active, .eleitissimos-pill:hover {
+      border-color: rgba(198,169,122,0.5);
+      color: var(--gold);
+      background: rgba(198,169,122,0.06);
+    }
+    .eleitissimos-icon {
+      display: inline-block;
+      color: var(--gold);
+      font-size: 0.65rem;
+      animation: iconPulse 3.5s ease-in-out infinite;
+    }
+    @keyframes iconPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* ── Eleitíssimos section header ── */
+    .eleitissimos-section-header {
+      display: none;
+      text-align: center;
+      padding: 3.5rem 1.5rem 2.5rem;
+      border-bottom: 1px solid #20202e;
+      margin-bottom: 0;
+    }
+    .eleitissimos-section-header.visible {
+      display: block;
+    }
+    .eleitissimos-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      color: var(--text-3);
+      letter-spacing: 0.04em;
+      line-height: 1.7;
+      max-width: 680px;
+      margin: 0.9rem auto 0;
+    }
+    .eleitissimos-headline em {
+      color: var(--gold);
+      font-style: italic;
+    }
+
     /* ── Estreias divider inside grid ── */
     .estreias-divider {
       grid-column: 1 / -1;
@@ -578,6 +627,8 @@
       <button class="f-pill" onclick="filter(this,'criancas')">Crianças</button>
       <span class="nav-sep">✦</span>
       <button class="f-pill" onclick="filter(this,'bebes')">Bebés</button>
+      <span class="nav-sep">✦</span>
+      <button class="f-pill eleitissimos-pill" onclick="filter(this,'eleitissimos')"><span class="eleitissimos-icon">◈</span> Eleitíssimos</button>
     </div>
   </nav>
 
@@ -629,10 +680,22 @@
   <div class="search-msg" id="searchMsg"></div>
 
   <main class="main-wrap">
-    <div class="section-header">
+    <div class="section-header" id="main-section-header">
       <hr class="section-line" />
-      <span class="section-label">A Seleção Cinco Estrelas</span>
+      <span class="section-label" id="main-section-label">A Seleção Cinco Estrelas</span>
       <hr class="section-line" />
+    </div>
+
+    <!-- ══ CABEÇALHO ELEITÍSSIMOS ══ -->
+    <div class="eleitissimos-section-header" id="eleitissimos-header">
+      <div class="section-header">
+        <hr class="section-line" />
+        <span class="section-label">◈ Eleitíssimos</span>
+        <hr class="section-line" />
+      </div>
+      <p class="eleitissimos-headline">
+        Os campeões do custo-benefício: <em>qualidade máxima pelo preço mais justo.</em>
+      </p>
     </div>
 
     <div class="products-grid" id="grid">
@@ -1584,6 +1647,268 @@
         </div>
       </article>
 
+      <!-- ══════════ ELEITÍSSIMOS ══════════ -->
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.04s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71tslTDjqpL._AC_SL1500_.jpg"
+               alt="Xiaomi Smart Band 9" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=Xiaomi+Smart+Band+9'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · Wearables</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +18.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Xiaomi Smart Band 9</h2>
+          <p class="card-verdict">Preço imbatível para o volume de sensores de saúde. Monitor cardíaco, SpO2, stress e sono num bracelete ultra-leve que dura semanas com uma carga.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €35</span>
+            <span class="card-badge">xiaomi.com</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.08s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/61s0ybKJqZL._AC_SL1500_.jpg"
+               alt="Amazfit Bip 5" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=Amazfit+Bip+5'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · Wearables</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +12.500 avaliações</span>
+          </div>
+          <h2 class="card-title">Amazfit Bip 5</h2>
+          <p class="card-verdict">Chamadas por Bluetooth e GPS integrado por um valor mínimo. Ecrã grande, bateria de 10 dias e mais de 120 modos desportivos — sem gastar três dígitos.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €55</span>
+            <span class="card-badge">amazfit.com</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.12s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71qlOqCxEeL._AC_SL1500_.jpg"
+               alt="Soundcore Liberty 4 NC" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=Soundcore+Liberty+4+NC'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · Áudio</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +24.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Soundcore Liberty 4 NC</h2>
+          <p class="card-verdict">Cancelamento de ruído de topo a preço de gama média. ANC adaptativo com 98,5% de eficácia, som Hi-Res e autonomia de 10 horas — a escolha inteligente.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €75</span>
+            <span class="card-badge">soundcore.com</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.16s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71o8Q5XJS5L._AC_SL1500_.jpg"
+               alt="Soundcore Life Q30" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=Soundcore+Life+Q30'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · Áudio</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +31.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Soundcore Life Q30</h2>
+          <p class="card-verdict">Conforto de estúdio e bateria gigante de até 60 horas. Almofadas de memória, ANC híbrido e dobragem compacta — o headphone que devia custar o dobro.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €55</span>
+            <span class="card-badge">soundcore.com</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.20s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71nzMDMRPML._AC_SL1500_.jpg"
+               alt="POCO X7 Pro 5G" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=POCO+X7+Pro+5G'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · Smartphones</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +9.800 avaliações</span>
+          </div>
+          <h2 class="card-title">POCO X7 Pro 5G</h2>
+          <p class="card-verdict">Potência e ecrã de topo de gama por preço acessível. MediaTek Dimensity 8400, 120 Hz AMOLED e 6000 mAh — a relação qualidade-preço do ano.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €320</span>
+            <span class="card-badge">poco.com</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.24s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71YOWF3GKBL._AC_SL1500_.jpg"
+               alt="Nothing Phone (2a)" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=Nothing+Phone+2a'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · Smartphones</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +7.200 avaliações</span>
+          </div>
+          <h2 class="card-title">Nothing Phone (2a)</h2>
+          <p class="card-verdict">Design icónico e sistema operativo limpo e ultra-fluido. Interface Nothing OS sem bloatware, Glyph Interface exclusiva e desempenho sólido a um preço justo.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €329</span>
+            <span class="card-badge">nothing.tech</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.28s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/81IpYkJFEHL._AC_SL1500_.jpg"
+               alt="TCL QM6K" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=TCL+QM6K'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · TVs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7 &nbsp;·&nbsp; +5.600 avaliações</span>
+          </div>
+          <h2 class="card-title">TCL QM6K / C6KS</h2>
+          <p class="card-verdict">Tecnologia QLED e Google TV com o custo mais baixo do segmento. Brilho elevado, Google TV nativo e Dolby Vision — o melhor acesso à qualidade de imagem premium.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €499</span>
+            <span class="card-badge">tcl.com</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.32s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71BjZDHqeGL._AC_SL1500_.jpg"
+               alt="Hisense U7" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=Hisense+U7'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · TVs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +8.100 avaliações</span>
+          </div>
+          <h2 class="card-title">Hisense U6 / U7</h2>
+          <p class="card-verdict">Tecnologia Mini-LED e fluidez para jogos sem gastar muito. 144 Hz, VRR, Dolby Vision IQ e IMAX Enhanced — a escolha certa para gaming e cinema a preço acessível.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €549</span>
+            <span class="card-badge">hisense.com</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.36s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71an9eiBxpL._AC_SL1500_.jpg"
+               alt="Apple MacBook Air" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=Apple+MacBook+Air'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · Setups</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.8 &nbsp;·&nbsp; +22.000 avaliações</span>
+          </div>
+          <h2 class="card-title">Apple MacBook Neo</h2>
+          <p class="card-verdict">Entrada económica no mundo Mac com construção de elite. Chip Apple Silicon, ecrã Liquid Retina e autonomia de 18 horas — o Mac mais acessível sem compromissos.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €1.099</span>
+            <span class="card-badge">apple.com</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="p-card fade-up" data-cat="eleitissimos" style="transition-delay:.40s">
+        <div class="card-media">
+          <img src="https://m.media-amazon.com/images/I/71Swqqe7XAL._AC_SL1500_.jpg"
+               alt="Lenovo IdeaPad Slim 5" loading="lazy"
+               onerror="this.src='https://fakeimg.pl/700x525/1c1a1e/c6a97a?text=Lenovo+IdeaPad+Slim'" />
+          <div class="card-overlay"></div>
+          <span class="cat-tag">Eleitíssimos · Setups</span>
+        </div>
+        <div class="card-body">
+          <div class="card-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6 &nbsp;·&nbsp; +14.300 avaliações</span>
+          </div>
+          <h2 class="card-title">Lenovo IdeaPad Slim 3/5</h2>
+          <p class="card-verdict">O cavalo de batalha perfeito para o dia a dia e trabalho. Processador de última geração, ecrã IPS e construção sólida — a escolha racional para produtividade sem excessos.</p>
+          <div class="card-footer">
+            <span class="card-price">≈ €649</span>
+            <span class="card-badge">lenovo.com</span>
+          </div>
+          <a href="#" class="cta-btn" rel="sponsored noopener" target="_blank">
+            Verificar Preço na Amazon
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </article>
+
     <div id="load-more-wrap" style="text-align:center;margin-top:4rem;">
       <hr class="hl" style="margin-bottom:2.5rem;" />
       <button class="load-more-btn" onclick="loadMore()">Carregar Mais Eleitos</button>
@@ -1742,10 +2067,21 @@
       btn.classList.add('active');
       currentCat = cat;
 
-      const allCards      = Array.from(document.querySelectorAll('#grid .p-card'));
-      const loadMoreWrap  = document.getElementById('load-more-wrap');
-      const loadMoreBtn   = loadMoreWrap ? loadMoreWrap.querySelector('.load-more-btn') : null;
-      const divider       = document.querySelector('.estreias-divider');
+      const allCards           = Array.from(document.querySelectorAll('#grid .p-card'));
+      const loadMoreWrap       = document.getElementById('load-more-wrap');
+      const loadMoreBtn        = loadMoreWrap ? loadMoreWrap.querySelector('.load-more-btn') : null;
+      const divider            = document.querySelector('.estreias-divider');
+      const mainHeader         = document.getElementById('main-section-header');
+      const eleitissimosHeader = document.getElementById('eleitissimos-header');
+
+      // Gerir cabeçalhos de secção
+      if (cat === 'eleitissimos') {
+        if (mainHeader) mainHeader.style.display = 'none';
+        if (eleitissimosHeader) eleitissimosHeader.classList.add('visible');
+      } else {
+        if (mainHeader) mainHeader.style.display = '';
+        if (eleitissimosHeader) eleitissimosHeader.classList.remove('visible');
+      }
 
       if (cat === 'todos') {
         // — Mostrar os primeiros TODOS_INITIAL; esconder o resto até "Carregar Mais"
