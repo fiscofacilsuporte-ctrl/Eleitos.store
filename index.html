@@ -416,59 +416,67 @@
       letter-spacing: 0.05em;
     }
   
-    /* ── Modais Legais ── */
-    .legal-links { margin-top: 1.2rem; display: flex; justify-content: center; gap: 1.8rem; }
-    .legal-trigger {
-      font-size: 0.52rem; font-weight: 300; letter-spacing: 0.18em;
-      color: var(--text-4); text-transform: uppercase; cursor: pointer;
-      background: none; border: none; padding: 0;
-      transition: color .25s ease;
-      text-decoration: underline; text-underline-offset: 3px;
-      text-decoration-color: rgba(198,169,122,0.2);
+    /* ── Barra de Pesquisa ── */
+    .search-section {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 1.4rem 1.5rem 0.2rem; gap: 0.6rem;
     }
-    .legal-trigger:hover { color: var(--gold); text-decoration-color: rgba(198,169,122,0.6); }
+    .search-wrap {
+      position: relative; width: 100%; max-width: 460px;
+    }
+    .search-input {
+      width: 100%; padding: 0.62rem 3rem 0.62rem 1.1rem;
+      background: rgba(28,26,30,0.9); border: 1px solid rgba(198,169,122,0.18);
+      border-radius: 8px; color: var(--text-1); font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem; font-weight: 300; letter-spacing: 0.06em;
+      outline: none; transition: border-color .25s ease, box-shadow .25s ease;
+      box-sizing: border-box;
+    }
+    .search-input::placeholder { color: var(--text-4); letter-spacing: 0.1em; }
+    .search-input:focus {
+      border-color: rgba(198,169,122,0.45);
+      box-shadow: 0 0 0 3px rgba(198,169,122,0.07);
+    }
+    .search-btn {
+      position: absolute; right: 0; top: 0; height: 100%; width: 2.8rem;
+      background: none; border: none; cursor: pointer;
+      color: var(--text-4); display: flex; align-items: center; justify-content: center;
+      transition: color .2s ease; border-radius: 0 8px 8px 0;
+    }
+    .search-btn:hover { color: var(--gold); }
+    .search-btn svg { width: 15px; height: 15px; }
 
-    .legal-modal-overlay {
-      display: none; position: fixed; inset: 0; z-index: 9999;
-      background: rgba(10,9,12,0.85); backdrop-filter: blur(8px);
-      align-items: center; justify-content: center; padding: 1.5rem;
+    /* Autocomplete */
+    .search-suggestions {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--bg-card); border: 1px solid rgba(198,169,122,0.18);
+      border-radius: 8px; overflow: hidden; z-index: 500;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      display: none;
     }
-    .legal-modal-overlay.open { display: flex; }
-    .legal-modal {
-      background: var(--bg-card); border: 1px solid rgba(198,169,122,0.15);
-      border-radius: 12px; max-width: 680px; width: 100%;
-      max-height: 82vh; overflow-y: auto; padding: 2.2rem 2rem;
-      position: relative;
-      scrollbar-width: thin; scrollbar-color: rgba(198,169,122,0.2) transparent;
+    .search-suggestions.show { display: block; }
+    .search-suggestion-item {
+      padding: 0.65rem 1.1rem; font-size: 0.68rem; font-weight: 300;
+      letter-spacing: 0.05em; color: var(--text-2); cursor: pointer;
+      transition: background .15s, color .15s;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
     }
-    .legal-modal-close {
-      position: sticky; top: 0; float: right; margin: -0.5rem -0.5rem 0.5rem 1rem;
-      background: none; border: none; color: var(--text-3); font-size: 1.1rem;
-      cursor: pointer; line-height: 1; padding: 4px 8px; border-radius: 4px;
-      transition: color .2s;
+    .search-suggestion-item:last-child { border-bottom: none; }
+    .search-suggestion-item:hover, .search-suggestion-item.active {
+      background: rgba(198,169,122,0.07); color: var(--gold);
     }
-    .legal-modal-close:hover { color: var(--gold); }
-    .legal-modal h2 {
-      font-family: 'Cormorant Garamond', serif; font-size: clamp(1rem,3vw,1.4rem);
-      font-weight: 600; letter-spacing: 0.06em; color: var(--text-1);
-      margin-bottom: 0.3rem;
+    .search-suggestion-item mark {
+      background: none; color: var(--gold); font-weight: 500;
     }
-    .legal-modal .legal-date {
-      font-size: 0.52rem; letter-spacing: 0.15em; color: var(--text-4);
-      text-transform: uppercase; margin-bottom: 1.6rem;
-      display: block; padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(198,169,122,0.1);
+
+    /* Feedback */
+    .search-feedback {
+      font-size: 0.56rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-4); height: 1rem; text-align: center;
+      transition: opacity .3s ease; opacity: 0;
     }
-    .legal-modal h3 {
-      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--gold); font-weight: 500; margin: 1.4rem 0 0.5rem;
-    }
-    .legal-modal p {
-      font-size: 0.72rem; font-weight: 300; line-height: 1.85;
-      color: var(--text-3); margin-bottom: 0.6rem;
-    }
-    .legal-modal a { color: var(--gold); text-decoration: none; }
-    .legal-modal a:hover { text-decoration: underline; }
+    .search-feedback.show { opacity: 1; }
+    .search-feedback.gold { color: var(--gold); }
 
     </style>
 </head>
@@ -541,6 +549,27 @@
         <span>Exclusivo Moda Amazon Prime</span>
       </a>
     </div>
+  </div>
+
+  <div class="search-section">
+    <div class="search-wrap">
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="Pesquisar produto no catálogo..."
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Pesquisar produto"
+      />
+      <button class="search-btn" id="searchBtn" aria-label="Pesquisar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+    <div class="search-feedback" id="searchFeedback"></div>
   </div>
 
   <main class="main-wrap">
@@ -1550,76 +1579,7 @@
   <footer class="site-footer">
     <p class="footer-line">© 2025 ELEITOS — Curadoria independente. Não somos a Amazon.</p>
     <p class="footer-line" style="color:var(--text-3); margin-top:0.4rem;">Como Associado da Amazon, recebemos uma comissão por compras elegíveis efetuadas através dos nossos links. Os preços são indicativos e podem variar.</p>
-    <div class="legal-links">
-      <button class="legal-trigger" onclick="abrirModal('modal-privacidade')">Política de Privacidade</button>
-      <button class="legal-trigger" onclick="abrirModal('modal-termos')">Termos de Uso</button>
-    </div>
   </footer>
-
-  <!-- ── Modal: Política de Privacidade ── -->
-  <div class="legal-modal-overlay" id="modal-privacidade" onclick="fecharModalFora(event, 'modal-privacidade')">
-    <div class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="titulo-privacidade">
-      <button class="legal-modal-close" onclick="fecharModal('modal-privacidade')" aria-label="Fechar">✕</button>
-      <h2 id="titulo-privacidade">Política de Privacidade</h2>
-      <span class="legal-date">Última atualização: Maio de 2025</span>
-
-      <h3>1. Quem Somos</h3>
-      <p>ELEITOS (eleitos.me) é um site de curadoria independente de produtos. Não vendemos produtos, não processamos pagamentos e não recolhemos dados pessoais de forma direta.</p>
-
-      <h3>2. Dados Recolhidos</h3>
-      <p>Este site não utiliza formulários de registo nem recolhe dados pessoais identificáveis. Não temos conta de utilizador, newsletter nem sistema de login.</p>
-      <p>Como qualquer site, o servidor pode registar automaticamente o endereço IP, tipo de browser e páginas visitadas por razões técnicas e de segurança. Estes dados não são partilhados com terceiros e são eliminados regularmente.</p>
-
-      <h3>3. Cookies e Tecnologias de Rastreio</h3>
-      <p>Este site não utiliza cookies próprios de rastreio ou marketing. A Amazon, enquanto plataforma terceira para a qual os nossos links redirecionam, pode utilizar cookies próprios ao abrigo da sua política de privacidade, sobre a qual não temos controlo.</p>
-
-      <h3>4. Links de Afiliado</h3>
-      <p>Alguns links presentes neste site são links de afiliado Amazon. Quando clica num desses links e efetua uma compra, recebemos uma pequena comissão sem qualquer custo adicional para si. Esta comissão não influencia as nossas recomendações — todos os produtos são selecionados exclusivamente com base nas avaliações dos clientes.</p>
-
-      <h3>5. Serviços de Terceiros</h3>
-      <p>Este site é alojado no GitHub Pages. O conteúdo está sujeito aos termos de serviço do GitHub. Não integramos redes sociais, ferramentas de analytics nem publicidade de terceiros.</p>
-
-      <h3>6. Os Seus Direitos</h3>
-      <p>Uma vez que não recolhemos dados pessoais, não há dados a consultar, corrigir ou eliminar. Para qualquer questão relacionada com privacidade, pode contactar-nos através de <a href="mailto:eleitos@proton.me">eleitos@proton.me</a>.</p>
-
-      <h3>7. Alterações a Esta Política</h3>
-      <p>Reservamo-nos o direito de atualizar esta política. Quaisquer alterações serão refletidas nesta página com a data de atualização revista.</p>
-    </div>
-  </div>
-
-  <!-- ── Modal: Termos de Uso ── -->
-  <div class="legal-modal-overlay" id="modal-termos" onclick="fecharModalFora(event, 'modal-termos')">
-    <div class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="titulo-termos">
-      <button class="legal-modal-close" onclick="fecharModal('modal-termos')" aria-label="Fechar">✕</button>
-      <h2 id="titulo-termos">Termos de Uso</h2>
-      <span class="legal-date">Última atualização: Maio de 2025</span>
-
-      <h3>1. Aceitação dos Termos</h3>
-      <p>Ao aceder a eleitos.me, aceita os presentes Termos de Uso. Se não concordar com algum dos termos, pedimos que não utilize o site.</p>
-
-      <h3>2. Natureza do Serviço</h3>
-      <p>ELEITOS é um site de curadoria editorial independente. Não somos um retalhista, não processamos encomendas e não temos qualquer relação comercial direta com os fabricantes dos produtos apresentados. Somos parceiros do programa Amazon Associates.</p>
-
-      <h3>3. Precisão da Informação</h3>
-      <p>Os preços apresentados são indicativos e atualizados periodicamente de forma automática. Podem existir discrepâncias entre o preço apresentado e o preço real no momento da compra. Recomendamos que confirme sempre o preço final na página do produto antes de concluir qualquer transação.</p>
-      <p>As avaliações e classificações referenciadas são baseadas em dados públicos da Amazon e podem ter sido atualizadas desde a nossa última verificação.</p>
-
-      <h3>4. Links para Terceiros</h3>
-      <p>Este site contém links para a Amazon e outros sites de terceiros. Ao clicar nesses links, sairá do domínio eleitos.me. Não somos responsáveis pelo conteúdo, políticas de privacidade ou práticas de qualquer site terceiro.</p>
-
-      <h3>5. Propriedade Intelectual</h3>
-      <p>O conteúdo editorial do site — incluindo textos descritivos, conceito de curadoria e design — é propriedade de ELEITOS. As imagens dos produtos pertencem aos respetivos fabricantes e são utilizadas para fins informativos. As marcas mencionadas pertencem aos seus titulares.</p>
-
-      <h3>6. Limitação de Responsabilidade</h3>
-      <p>ELEITOS não se responsabiliza por decisões de compra tomadas com base na informação apresentada, por diferenças de preço ou disponibilidade, nem por qualquer problema decorrente de transações realizadas em plataformas de terceiros.</p>
-
-      <h3>7. Lei Aplicável</h3>
-      <p>Estes termos são regidos pela lei portuguesa. Qualquer litígio será submetido aos tribunais competentes em Portugal.</p>
-
-      <h3>8. Contacto</h3>
-      <p>Para questões relacionadas com estes termos, contacte-nos através de <a href="mailto:eleitos@proton.me">eleitos@proton.me</a>.</p>
-    </div>
-  </div>
 
   <script>
     // ── Scroll reveal ──────────────────────────────────────────────────────────
@@ -1776,29 +1736,164 @@
       }
     }
   
-    // ── Modais Legais ─────────────────────────────────────────────────────────
-    function abrirModal(id) {
-      const m = document.getElementById(id);
-      if (m) {
-        m.classList.add('open');
-        document.body.style.overflow = 'hidden';
-        const inner = m.querySelector('.legal-modal');
-        if (inner) inner.scrollTop = 0;
+    // ── Barra de Pesquisa ─────────────────────────────────────────────────────
+    const SEARCH_FALLBACK = 'https://amzn.to/4ebhOo5';
+
+    const CATALOG = [
+      { t: "Sony WH-1000XM5",              u: "https://amzn.to/4wRY3ZY" },
+      { t: "Bose QuietComfort Ultra",       u: "https://amzn.to/4tXG4yG" },
+      { t: "Apple iPhone 16 Pro Max",       u: "https://amzn.to/4u2Rvp4" },
+      { t: "Samsung Galaxy S25 Ultra",      u: "https://amzn.to/4dvGg3m" },
+      { t: "Google Pixel 9 Pro",            u: "https://amzn.to/43jkbPL" },
+      { t: "Samsung Neo QLED QN90D 55"",   u: "https://amzn.to/4dORajG" },
+      { t: "LG C4 OLED 55"",               u: "https://amzn.to/3PsmXPk" },
+      { t: "Sony Bravia XR A95L QD-OLED",  u: "https://amzn.to/4e9g9iM" },
+      { t: "Elgato Stream Deck MK.2",      u: "https://amzn.to/3RO6k14" },
+      { t: "Logitech MX Master 3S",        u: "https://amzn.to/43vEmtB" },
+      { t: "Amazon Echo Show 11",          u: "https://amzn.to/4ujlqcN" },
+      { t: "Philips Hue Gradient Lightstrip", u: "https://amzn.to/4faKmzd" },
+      { t: "Apple Watch Ultra 2",          u: "https://amzn.to/4dIGUL7" },
+      { t: "Garmin Fēnix 7X Pro",          u: "https://amzn.to/4fI82ej" },
+      { t: "Arc'teryx Beta AR Jacket",     u: "https://amzn.to/43jlXAp" },
+      { t: "Patagonia Nano Puff",          u: "https://amzn.to/3Q77DHZ" },
+      { t: "Levi's 501 Original Fit",      u: "https://amzn.to/43zw0Be" },
+      { t: "New Balance 990v6",            u: "https://amzn.to/4uAAV0y" },
+      { t: "Adidas Samba OG",              u: "https://amzn.to/4e84vVo" },
+      { t: "Salomon XT-6",                 u: "https://amzn.to/3PGxl67" },
+      { t: "Geox J Perth Boy A",           u: "https://amzn.to/3Q3bQwm" },
+      { t: "LIONELO MIKA PLUS",            u: "https://amzn.to/3RMeOpt" },
+      { t: "Apple iPhone 17 Pro Max",      u: "https://amzn.to/4uzhNA6" },
+      { t: "Samsung Galaxy S26 Ultra",     u: "https://amzn.to/4tWJ9iw" },
+      { t: "Sony WH-1000XM6",             u: "https://amzn.to/4vgAKHW" },
+      { t: "Apple Watch Ultra 3",          u: "https://amzn.to/4dyUeBt" },
+      { t: "DJI Osmo Pocket 4",           u: "https://amzn.to/4fKuAet" },
+      { t: "Bose QC Ultra Earbuds II",     u: "https://amzn.to/4nVIGMf" },
+      { t: "Logitech MX Mechanical Mini V2", u: "https://amzn.to/4dxdgbv" },
+      { t: "LG UltraGear OLED 32\" (2026)", u: "https://amzn.to/4e7JaLO" },
+      { t: "Anker Nebula Capsule 3 Laser", u: "https://amzn.to/4uzImoX" },
+      { t: "Shargeek 140W GaN",           u: "https://amzn.to/4wT8Ovk" },
+    ];
+
+    function normalizar(str) {
+      return str.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    function pesquisar(query) {
+      const q = normalizar(query);
+      if (!q) return [];
+      const palavras = q.split(' ').filter(p => p.length > 1);
+      return CATALOG.filter(p => {
+        const titulo = normalizar(p.t);
+        return palavras.every(palavra => titulo.includes(palavra));
+      });
+    }
+
+    function destacar(texto, query) {
+      const palavras = normalizar(query).split(' ').filter(p => p.length > 1);
+      let resultado = texto;
+      palavras.forEach(p => {
+        const re = new RegExp(`(${p})`, 'gi');
+        resultado = resultado.replace(re, '<mark>$1</mark>');
+      });
+      return resultado;
+    }
+
+    function redirecionar(url, encontrado) {
+      const fb   = document.getElementById('searchFeedback');
+      const link = document.createElement('a');
+      link.href  = url;
+      link.rel   = 'sponsored noopener';
+      link.target = '_blank';
+
+      if (encontrado) {
+        fb.textContent = '✦ Produto encontrado — a abrir...';
+        fb.className   = 'search-feedback show gold';
+      } else {
+        fb.textContent = 'Produto não encontrado no catálogo — a encaminhar para a Amazon...';
+        fb.className   = 'search-feedback show';
+      }
+      setTimeout(() => {
+        link.click();
+        setTimeout(() => { fb.className = 'search-feedback'; }, 2000);
+      }, 900);
+    }
+
+    function executarPesquisa() {
+      const query    = document.getElementById('searchInput').value.trim();
+      const sugsEl   = document.getElementById('searchSuggestions');
+      sugsEl.classList.remove('show');
+
+      if (!query) return;
+
+      const resultados = pesquisar(query);
+      if (resultados.length > 0) {
+        redirecionar(resultados[0].u, true);
+      } else {
+        redirecionar(SEARCH_FALLBACK, false);
       }
     }
-    function fecharModal(id) {
-      const m = document.getElementById(id);
-      if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
-    }
-    function fecharModalFora(e, id) {
-      if (e.target.id === id) fecharModal(id);
-    }
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        document.querySelectorAll('.legal-modal-overlay.open')
-          .forEach(m => { m.classList.remove('open'); document.body.style.overflow = ''; });
+
+    // ── Autocomplete ──────────────────────────────────────────────────────────
+    (function initSearch() {
+      const input  = document.getElementById('searchInput');
+      const btn    = document.getElementById('searchBtn');
+      const sugsEl = document.getElementById('searchSuggestions');
+      let activeIdx = -1;
+
+      function renderSugs(query) {
+        const res = pesquisar(query).slice(0, 6);
+        sugsEl.innerHTML = '';
+        activeIdx = -1;
+
+        if (!res.length || !query.trim()) {
+          sugsEl.classList.remove('show');
+          return;
+        }
+
+        res.forEach((p, i) => {
+          const div = document.createElement('div');
+          div.className = 'search-suggestion-item';
+          div.innerHTML = destacar(p.t, query);
+          div.addEventListener('mousedown', e => {
+            e.preventDefault();
+            input.value = p.t;
+            sugsEl.classList.remove('show');
+            redirecionar(p.u, true);
+          });
+          sugsEl.appendChild(div);
+        });
+        sugsEl.classList.add('show');
       }
-    });
+
+      input.addEventListener('input', () => renderSugs(input.value));
+
+      input.addEventListener('keydown', e => {
+        const items = sugsEl.querySelectorAll('.search-suggestion-item');
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          activeIdx = Math.min(activeIdx + 1, items.length - 1);
+          items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+          if (items[activeIdx]) input.value = items[activeIdx].textContent;
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          activeIdx = Math.max(activeIdx - 1, -1);
+          items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+        } else if (e.key === 'Enter') {
+          sugsEl.classList.remove('show');
+          executarPesquisa();
+        } else if (e.key === 'Escape') {
+          sugsEl.classList.remove('show');
+        }
+      });
+
+      btn.addEventListener('click', executarPesquisa);
+
+      document.addEventListener('click', e => {
+        if (!e.target.closest('.search-wrap')) sugsEl.classList.remove('show');
+      });
+    })();
   </script>
 </body>
 </html>
