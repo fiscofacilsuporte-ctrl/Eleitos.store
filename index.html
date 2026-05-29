@@ -366,7 +366,25 @@
       display: flex; align-items: center; justify-content: space-between;
       padding-top: 0.6rem; border-top: 1px solid #242238; margin-top: auto;
     }
-    .card-price { font-family: 'Cormorant Garamond', serif; font-weight: 200; font-size: 1.35rem; color: #caa880; letter-spacing: 0.06em; }
+    .card-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 200;
+      font-size: 1.35rem;
+      color: #caa880;
+      letter-spacing: 0.06em;
+      position: relative;
+      display: inline-block;
+    }
+    .card-price::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 100%;
+      height: 1px;
+      background-color: #caa880;
+      transform: translateY(-50%);
+    }
     .card-badge { font-size: 0.52rem; font-weight: 300; letter-spacing: 0.14em; color: var(--text-4); text-transform: uppercase; }
     .cta-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -608,6 +626,8 @@
       <span class="nav-sep">✦</span>
       <button class="f-pill estreias-pill" onclick="filter(this,'estreias')"><span class="estreias-star">✦</span> Estreias</button>
       <span class="nav-sep">✦</span>
+      <button class="f-pill eleitissimos-pill" onclick="filter(this,'eleitissimos')"><span class="eleitissimos-icon">◈</span> Eleitíssimos</button>
+      <span class="nav-sep">✦</span>
       <button class="f-pill" onclick="filter(this,'audio')">Áudio</button>
       <span class="nav-sep">✦</span>
       <button class="f-pill" onclick="filter(this,'smartphones')">Smartphones</button>
@@ -627,8 +647,6 @@
       <button class="f-pill" onclick="filter(this,'criancas')">Crianças</button>
       <span class="nav-sep">✦</span>
       <button class="f-pill" onclick="filter(this,'bebes')">Bebés</button>
-      <span class="nav-sep">✦</span>
-      <button class="f-pill eleitissimos-pill" onclick="filter(this,'eleitissimos')"><span class="eleitissimos-icon">◈</span> Eleitíssimos</button>
     </div>
   </nav>
 
