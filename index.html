@@ -115,6 +115,69 @@
       animation: fadeUp 1.8s 0.6s cubic-bezier(0.22,1,0.36,1) both;
     }
 
+    /* ── SEARCH BAR ── */
+    .search-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem 0.6rem;
+      background: transparent;
+    }
+    .search-inner {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #28263a;
+      transition: border-color 0.28s ease, background 0.28s ease;
+      position: relative;
+    }
+    .search-inner:focus-within {
+      border-color: rgba(198,169,122,0.4);
+      background: rgba(198,169,122,0.03);
+    }
+    .search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-2);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      padding: 7px 10px 7px 14px;
+    }
+    .search-input::placeholder {
+      color: var(--text-4);
+      letter-spacing: 0.18em;
+    }
+    .search-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      color: var(--text-3);
+      transition: color 0.25s ease;
+    }
+    .search-btn:hover { color: var(--gold); }
+    .search-btn svg { width: 14px; height: 14px; }
+    .search-msg {
+      text-align: center;
+      font-size: 0.55rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      color: var(--text-3);
+      padding: 0 1.5rem 0.5rem;
+      min-height: 1.2em;
+      transition: opacity 0.3s ease;
+    }
+    .search-msg a { color: var(--gold); text-decoration: none; }
+    .search-msg a:hover { text-decoration: underline; }
+
     /* ── NAVBAR ── */
     .site-nav {
       position: sticky; top: 0; z-index: 100;
@@ -542,6 +605,28 @@
       </a>
     </div>
   </div>
+
+  <!-- ── BARRA DE PESQUISA ── -->
+  <div class="search-wrap">
+    <div class="search-inner">
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="PESQUISAR PRODUTO  (ex: iphone 17 pro max)"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Pesquisar produto"
+      />
+      <button class="search-btn" id="searchBtn" aria-label="Pesquisar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="search-msg" id="searchMsg"></div>
 
   <main class="main-wrap">
     <div class="section-header">
@@ -1739,6 +1824,103 @@
         const lmw = document.getElementById('load-more-wrap');
         if (lmw) lmw.style.display = '';
       }
+    })();
+
+    // ── Pesquisa de Produtos ────────────────────────────────────────────────
+    (function initSearch() {
+      const FALLBACK_URL = 'https://amzn.to/4ebhOo5';
+
+      // Base de dados de produtos — nome + link afiliado
+      const products = [
+        { name: 'Sony WH-1000XM5',              link: 'https://amzn.to/4wRY3ZY' },
+        { name: 'Bose QuietComfort Ultra',       link: 'https://amzn.to/4tXG4yG' },
+        { name: 'Apple iPhone 16 Pro Max',       link: 'https://amzn.to/4u2Rvp4' },
+        { name: 'Samsung Galaxy S25 Ultra',      link: 'https://amzn.to/4dvGg3m' },
+        { name: 'Google Pixel 9 Pro',            link: 'https://amzn.to/43jkbPL' },
+        { name: 'Samsung Neo QLED QN90D 55"',    link: 'https://amzn.to/4dORajG' },
+        { name: 'LG C4 OLED 55"',               link: 'https://amzn.to/3PsmXPk' },
+        { name: 'Sony Bravia XR A95L QD-OLED',  link: 'https://amzn.to/4e9g9iM' },
+        { name: 'Elgato Stream Deck MK.2',       link: 'https://amzn.to/3RO6k14' },
+        { name: 'Logitech MX Master 3S',         link: 'https://amzn.to/43vEmtB' },
+        { name: 'Amazon Echo Show 11',           link: 'https://amzn.to/4ujlqcN' },
+        { name: 'Philips Hue Gradient Lightstrip',link:'https://amzn.to/4faKmzd' },
+        { name: 'Apple Watch Ultra 2',           link: 'https://amzn.to/4dIGUL7' },
+        { name: 'Garmin Fēnix 7X Pro',           link: 'https://amzn.to/4fI82ej' },
+        { name: "Arc'teryx Beta AR Jacket",      link: 'https://amzn.to/43jlXAp' },
+        { name: 'Patagonia Nano Puff',           link: 'https://amzn.to/3Q77DHZ' },
+        { name: "Levi's 501 Original Fit",       link: 'https://amzn.to/43zw0Be' },
+        { name: 'New Balance 990v6',             link: 'https://amzn.to/4uAAV0y' },
+        { name: 'Adidas Samba OG',               link: 'https://amzn.to/4e84vVo' },
+        { name: 'Salomon XT-6',                  link: 'https://amzn.to/3PGxl67' },
+        { name: 'Geox J Perth Boy A',            link: 'https://amzn.to/3Q3bQwm' },
+        { name: 'LIONELO MIKA PLUS',             link: 'https://amzn.to/3RMeOpt' },
+        { name: 'Apple iPhone 17 Pro Max',       link: 'https://amzn.to/4uzhNA6' },
+        { name: 'Samsung Galaxy S26 Ultra',      link: 'https://amzn.to/4tWJ9iw' },
+        { name: 'Sony WH-1000XM6',               link: 'https://amzn.to/4vgAKHW' },
+        { name: 'Apple Watch Ultra 3',           link: 'https://amzn.to/4dyUeBt' },
+        { name: 'DJI Osmo Pocket 4',             link: 'https://amzn.to/4fKuAet' },
+        { name: 'Bose QC Ultra Earbuds II',      link: 'https://amzn.to/4nVIGMf' },
+        { name: 'Logitech MX Mechanical Mini V2',link: 'https://amzn.to/4dxdgbv' },
+        { name: 'LG UltraGear OLED 32" (2026)', link: 'https://amzn.to/4e7JaLO' },
+        { name: 'Anker Nebula Capsule 3 Laser',  link: 'https://amzn.to/4uzImoX' },
+        { name: 'Shargeek 140W GaN',             link: 'https://amzn.to/4wT8Ovk' },
+      ];
+
+      // Normaliza texto para comparação (remove acentos, lowercases, etc.)
+      function normalize(s) {
+        return s.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/['"()"]/g, '')
+          .trim();
+      }
+
+      // Divide query em tokens e verifica se todos existem no nome
+      function matches(query, productName) {
+        const q = normalize(query);
+        const n = normalize(productName);
+        const tokens = q.split(/\s+/).filter(Boolean);
+        return tokens.length > 0 && tokens.every(t => n.includes(t));
+      }
+
+      function runSearch() {
+        const raw = document.getElementById('searchInput').value.trim();
+        const msg = document.getElementById('searchMsg');
+
+        if (!raw) { msg.innerHTML = ''; return; }
+
+        const found = products.find(p => matches(raw, p.name));
+
+        if (found) {
+          msg.innerHTML = '';
+          // Navegar imediatamente
+          const a = document.createElement('a');
+          a.href = found.link;
+          a.rel  = 'sponsored noopener';
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } else {
+          msg.innerHTML =
+            'Produto não encontrado na curadoria — ' +
+            '<a href="' + FALLBACK_URL + '" rel="sponsored noopener" target="_blank">' +
+            'a pesquisar na Amazon ✦</a>';
+          setTimeout(() => {
+            const a2 = document.createElement('a');
+            a2.href = FALLBACK_URL;
+            a2.rel  = 'sponsored noopener';
+            a2.target = '_blank';
+            document.body.appendChild(a2);
+            a2.click();
+            document.body.removeChild(a2);
+          }, 900);
+        }
+      }
+
+      document.getElementById('searchBtn').addEventListener('click', runSearch);
+      document.getElementById('searchInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') runSearch();
+      });
     })();
 
     // ── Vantagens de Elite Dropdown ─────────────────────────────────────────────
