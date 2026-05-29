@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-ELEITOS — Auto Update Prices via SerpAPI (Google Shopping)
-v3 — filtragem de outliers para preços mais precisos
+ELEITOS — Auto Update Prices
+Pesquisa diretamente na Amazon.es via SerpAPI — preços exatos sem ruído.
+Fallback: Google Shopping com filtro de outliers.
 """
 
 import re, time, random, os, sys, requests
@@ -13,40 +14,41 @@ SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "")
 SERPAPI_URL = "https://serpapi.com/search.json"
 
 PRODUCTS = [
-    {"title": "Sony WH-1000XM5",                 "search": "Sony WH-1000XM5 headphones"},
+    {"title": "Sony WH-1000XM5",                 "search": "Sony WH-1000XM5"},
     {"title": "Bose QuietComfort Ultra",          "search": "Bose QuietComfort Ultra Headphones"},
-    {"title": "Samsung Neo QLED QN90D 55",        "search": "Samsung Neo QLED QN90D 55 polegadas"},
-    {"title": "LG C4 OLED 55",                    "search": "LG C4 OLED 55 televisao"},
-    {"title": "Apple iPhone 17 Pro Max",          "search": "Apple iPhone 17 Pro Max 256GB"},
+    {"title": "Samsung Neo QLED QN90D 55",        "search": "Samsung Neo QLED QN90D 55"},
+    {"title": "LG C4 OLED 55",                    "search": "LG OLED55C44LA"},
+    {"title": "Apple iPhone 17 Pro Max",          "search": "Apple iPhone 17 Pro Max"},
     {"title": "Samsung Galaxy S26 Ultra",         "search": "Samsung Galaxy S26 Ultra"},
     {"title": "Sony WH-1000XM6",                  "search": "Sony WH-1000XM6"},
     {"title": "Apple Watch Ultra 3",              "search": "Apple Watch Ultra 3"},
     {"title": "DJI Osmo Pocket 4",               "search": "DJI Osmo Pocket 4"},
     {"title": "Bose QC Ultra Earbuds II",         "search": "Bose QuietComfort Ultra Earbuds"},
-    {"title": "Logitech MX Mechanical Mini V2",   "search": "Logitech MX Mechanical Mini V2 teclado"},
-    {"title": "LG UltraGear OLED 32",             "search": "LG UltraGear OLED 32 monitor 2024"},
-    {"title": "Anker Nebula Capsule 3 Laser",     "search": "Anker Nebula Capsule 3 Laser projetor"},
-    {"title": "Shargeek 140W GaN",               "search": "Shargeek 140W GaN carregador"},
-    {"title": "Sony Bravia XR A95L",             "search": "Sony Bravia XR A95L QD-OLED televisao"},
-    {"title": "Apple iPhone 16 Pro Max",          "search": "Apple iPhone 16 Pro Max 256GB novo"},
+    {"title": "Logitech MX Mechanical Mini V2",   "search": "Logitech MX Mechanical Mini V2"},
+    {"title": "LG UltraGear OLED 32",             "search": "LG UltraGear OLED 32 2024"},
+    {"title": "Anker Nebula Capsule 3 Laser",     "search": "Anker Nebula Capsule 3 Laser"},
+    {"title": "Shargeek 140W GaN",               "search": "Shargeek 140W GaN"},
+    {"title": "Sony Bravia XR A95L",             "search": "Sony XR-55A95L"},
+    {"title": "Apple iPhone 16 Pro Max",          "search": "Apple iPhone 16 Pro Max 256GB"},
     {"title": "Samsung Galaxy S25 Ultra",         "search": "Samsung Galaxy S25 Ultra 256GB"},
-    {"title": "Google Pixel 9 Pro",              "search": "Google Pixel 9 Pro 128GB novo"},
-    {"title": "Elgato Stream Deck MK.2",         "search": "Elgato Stream Deck MK2"},
-    {"title": "Logitech MX Master 3S",           "search": "Logitech MX Master 3S rato"},
-    {"title": "Amazon Echo Show",                "search": "Amazon Echo Show 10 3rd gen"},
-    {"title": "Philips Hue Gradient Lightstrip", "search": "Philips Hue Gradient Lightstrip 2m"},
-    {"title": "Apple Watch Ultra 2",             "search": "Apple Watch Ultra 2 novo"},
+    {"title": "Google Pixel 9 Pro",              "search": "Google Pixel 9 Pro 128GB"},
+    {"title": "Elgato Stream Deck MK.2",         "search": "Elgato Stream Deck MK.2"},
+    {"title": "Logitech MX Master 3S",           "search": "Logitech MX Master 3S"},
+    {"title": "Amazon Echo Show",                "search": "Amazon Echo Show 10"},
+    {"title": "Philips Hue Gradient Lightstrip", "search": "Philips Hue Gradient Lightstrip"},
+    {"title": "Apple Watch Ultra 2",             "search": "Apple Watch Ultra 2"},
     {"title": "Garmin",                          "search": "Garmin Fenix 7X Pro Solar"},
     {"title": "Arc'teryx Beta AR Jacket",        "search": "Arcteryx Beta AR Jacket"},
-    {"title": "Patagonia Nano Puff",             "search": "Patagonia Nano Puff Jacket"},
-    {"title": "Levi's 501 Original Fit",         "search": "Levis 501 Original Fit jeans"},
+    {"title": "Patagonia Nano Puff",             "search": "Patagonia Nano Puff"},
+    {"title": "Levi's 501 Original Fit",         "search": "Levis 501 Original Fit"},
     {"title": "New Balance 990v6",               "search": "New Balance 990v6"},
-    {"title": "Adidas Samba OG",                 "search": "Adidas Samba OG novo"},
-    {"title": "Salomon XT-6",                    "search": "Salomon XT-6 sapatilhas"},
-    {"title": "Geox J Perth Boy A",              "search": "Geox Perth Boy sapatilhas crianca"},
-    {"title": "LIONELO MIKA PLUS",               "search": "Lionelo Mika Plus carrinho bebe"},
+    {"title": "Adidas Samba OG",                 "search": "Adidas Samba OG"},
+    {"title": "Salomon XT-6",                    "search": "Salomon XT-6"},
+    {"title": "Geox J Perth Boy A",              "search": "Geox Perth Boy"},
+    {"title": "LIONELO MIKA PLUS",               "search": "Lionelo Mika Plus"},
 ]
 
+# ── Utilitários ────────────────────────────────────────────────────────────────
 def converter_preco(raw):
     try:
         raw = str(raw).replace('\xa0','').replace('\u202f','').replace(' ','').strip()
@@ -55,40 +57,74 @@ def converter_preco(raw):
             raw = raw.replace('.','').replace(',','.')
         elif ',' in raw:
             raw = raw.replace(',','.')
-        return float(raw)
+        v = float(raw)
+        return v if 1 < v < 100000 else None
     except:
         return None
 
 def formatar_preco(valor):
-    inteiro = round(valor)
-    return f"≈ €{inteiro:,}".replace(",", ".") if inteiro >= 1000 else f"≈ €{inteiro}"
+    i = round(valor)
+    return f"≈ €{i:,}".replace(",",".") if i >= 1000 else f"≈ €{i}"
 
-def preco_representativo(precos_raw):
-    """
-    Filtra outliers e devolve um preço representativo.
-    - Remove preços abaixo de 50% da mediana (segunda mão / erros)
-    - Remove preços acima de 300% da mediana (bundles / erros)
-    - Devolve a mediana dos restantes
-    """
-    precos = sorted([p for p in precos_raw if p and 1 < p < 50000])
+def mediana_filtrada(lista):
+    """Remove outliers (<50% ou >250% da mediana bruta) e devolve mediana limpa."""
+    precos = sorted([p for p in lista if p])
     if not precos:
         return None
+    med_bruta = precos[len(precos) // 2]
+    limpos = [p for p in precos if med_bruta * 0.5 <= p <= med_bruta * 2.5]
+    if not limpos:
+        limpos = precos
+    return limpos[len(limpos) // 2]
 
-    # Mediana inicial (sem filtrar)
-    n = len(precos)
-    mediana_inicial = precos[n // 2]
+# ── Engine 1: Amazon.es direto ─────────────────────────────────────────────────
+def preco_amazon(search_query):
+    params = {
+        "engine":        "amazon",
+        "k":             search_query,
+        "api_key":       SERPAPI_KEY,
+        "amazon_domain": "amazon.es",
+        "language":      "es_ES",
+    }
+    try:
+        r = requests.get(SERPAPI_URL, params=params, timeout=30)
+        data = r.json()
 
-    # Filtrar outliers
-    filtrados = [p for p in precos if mediana_inicial * 0.5 <= p <= mediana_inicial * 3.0]
-    if not filtrados:
-        filtrados = precos  # fallback sem filtro
+        if "error" in data:
+            print(f"    ⚠ Amazon engine: {data['error']}")
+            return None
 
-    # Mediana final
-    f = len(filtrados)
-    mediana_final = filtrados[f // 2]
-    return mediana_final
+        resultados = data.get("organic_results", [])
+        if not resultados:
+            print(f"    ⚠ Amazon.es: sem resultados")
+            return None
 
-def obter_preco(search_query):
+        precos = []
+        for item in resultados[:8]:
+            # O campo price pode ser dict ou string consoante a versão da API
+            p = item.get("price")
+            if isinstance(p, dict):
+                valor = p.get("value") or converter_preco(p.get("raw", ""))
+            else:
+                valor = converter_preco(str(p)) if p else None
+            if valor:
+                precos.append(float(valor))
+
+        if not precos:
+            print(f"    ⚠ Amazon.es: preços não extraídos")
+            return None
+
+        resultado = mediana_filtrada(precos)
+        if resultado:
+            print(f"    🛒 Amazon.es | {len(precos)} resultados | mediana: {formatar_preco(resultado)}")
+        return formatar_preco(resultado) if resultado else None
+
+    except Exception as e:
+        print(f"    ⚠ Amazon engine erro: {e}")
+        return None
+
+# ── Engine 2: Google Shopping (fallback) ──────────────────────────────────────
+def preco_google_shopping(search_query):
     params = {
         "engine":   "google_shopping",
         "q":        search_query,
@@ -96,65 +132,64 @@ def obter_preco(search_query):
         "gl":       "pt",
         "hl":       "pt",
         "currency": "EUR",
-        "num":      "20",   # mais resultados = mediana mais fiável
+        "num":      "20",
     }
     try:
         r = requests.get(SERPAPI_URL, params=params, timeout=30)
         data = r.json()
 
         if "error" in data:
-            print(f"    ✗ SerpAPI: {data['error']}")
             return None
 
         resultados = data.get("shopping_results", [])
-        if not resultados:
-            print(f"    ⚠ Sem resultados")
-            return None
-
-        precos = []
-        for item in resultados:
-            valor = converter_preco(item.get("price", ""))
-            if valor:
-                precos.append(valor)
+        precos = [converter_preco(i.get("price","")) for i in resultados]
+        precos = [p for p in precos if p]
 
         if not precos:
-            print(f"    ⚠ Nenhum preço válido")
             return None
 
-        representativo = preco_representativo(precos)
-        if not representativo:
-            return None
+        resultado = mediana_filtrada(precos)
+        if resultado:
+            print(f"    🛍 Google Shopping | {len(precos)} resultados | mediana: {formatar_preco(resultado)}")
+        return formatar_preco(resultado) if resultado else None
 
-        print(f"    📊 {len(precos)} preços | min ≈ €{round(min(precos))} | mediana filtrada: {formatar_preco(representativo)}")
-        return formatar_preco(representativo)
-
-    except requests.exceptions.Timeout:
-        print(f"    ✗ Timeout")
-        return None
     except Exception as e:
-        print(f"    ✗ Erro: {e}")
+        print(f"    ⚠ Google Shopping erro: {e}")
         return None
 
+# ── Orquestrador ──────────────────────────────────────────────────────────────
+def obter_preco(search_query):
+    # Tenta Amazon.es primeiro — fonte mais fiável e coerente com os links
+    preco = preco_amazon(search_query)
+    if preco:
+        return preco
+
+    print(f"    🔄 Fallback → Google Shopping")
+    time.sleep(random.uniform(1.0, 2.0))
+    return preco_google_shopping(search_query)
+
+# ── Atualiza HTML ─────────────────────────────────────────────────────────────
 def atualizar_html(soup, titulo, novo_preco):
     for h2 in soup.find_all("h2", class_="card-title"):
-        h2_texto = h2.get_text(strip=True)
-        if titulo.lower() in h2_texto.lower() or h2_texto.lower() in titulo.lower():
-            card_body = h2.find_parent("div", class_="card-body")
-            if card_body:
-                span = card_body.find("span", class_="card-price")
+        txt = h2.get_text(strip=True)
+        if titulo.lower() in txt.lower() or txt.lower() in titulo.lower():
+            cb = h2.find_parent("div", class_="card-body")
+            if cb:
+                span = cb.find("span", class_="card-price")
                 if span:
                     antigo = span.get_text(strip=True)
                     span.string = novo_preco
-                    return True, h2_texto, antigo
+                    return True, txt, antigo
     return False, titulo, None
 
+# ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     if not SERPAPI_KEY:
         print("❌ SERPAPI_KEY não encontrada.")
         sys.exit(1)
 
     print("=" * 60)
-    print(f"  ELEITOS — Auto Update Prices v3")
+    print(f"  ELEITOS — Auto Update Prices (Amazon.es)")
     print(f"  {datetime.now().strftime('%Y-%m-%d %H:%M UTC')}")
     print("=" * 60)
 
@@ -171,12 +206,12 @@ def main():
         print(f"    🔍 '{search}'")
 
         if i > 1:
-            time.sleep(random.uniform(1.0, 2.0))
+            time.sleep(random.uniform(1.5, 2.5))
 
         preco = obter_preco(search)
 
         if not preco:
-            print(f"    ✗ Sem preço")
+            print(f"    ✗ Sem preço — mantido")
             sem_preco.append(titulo)
             continue
 
@@ -197,7 +232,7 @@ def main():
             f.write(str(soup))
         print(f"\n✅ index.html guardado com {len(atualizados)} atualização(ões)")
     else:
-        print(f"\n✓ Sem alterações")
+        print(f"\n✓ Sem alterações — index.html não modificado")
 
     print("\n" + "=" * 60)
     print(f"  ✅ Atualizados:   {len(atualizados)}")
@@ -206,12 +241,10 @@ def main():
     print(f"  ✗ Não no HTML:   {len(nao_encontrado)}")
     if atualizados:
         print("\n  Alterações:")
-        for l in atualizados:
-            print(f"    · {l}")
+        for l in atualizados: print(f"    · {l}")
     if sem_preco:
         print("\n  Verificar manualmente:")
-        for p in sem_preco:
-            print(f"    · {p}")
+        for p in sem_preco: print(f"    · {p}")
     print("=" * 60)
 
 if __name__ == "__main__":
